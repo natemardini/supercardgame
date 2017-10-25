@@ -60,7 +60,8 @@ class Model {
                 .update(this, "id");
         } else {
             return knex(this.constructor.tableName)
-                .insert(this, "id");
+                .insert(this, "id")
+                .then(id => this.id = id);
         }
     }
 

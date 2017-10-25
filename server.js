@@ -49,4 +49,6 @@ app.listen(PORT, () => {
     console.log(`Example app listening on port ${  PORT}`);
 });
 
-module.exports = knex;
+module.exports = {
+    knex
+};
