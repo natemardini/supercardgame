@@ -3,7 +3,8 @@ module.exports = {
         "browser": true,
         "commonjs": true,
         "node": true,
-        "es6": true
+        "es6": true,
+        "mocha": true
     },
     "extends": "eslint:recommended",
     "rules": {
@@ -53,6 +54,12 @@ module.exports = {
         "camelcase": "warn",
         "max-nested-callbacks": ["warn", 3],
         "space-in-parens": ["warn", "never"],
-        "no-console": "warn"
+        "no-console": "warn",
+        "no-unused-vars": [
+            "error",
+            {
+                "varsIgnorePattern": "should|expect"
+            }
+        ]
     }
 };

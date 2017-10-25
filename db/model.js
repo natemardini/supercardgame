@@ -19,7 +19,7 @@ class Model {
      */
     static findOne(query) {
         if (typeof query === "object" || typeof query === "number") {
-            return this.findAll(query).limit(1);
+            return this.findAll(query).limit(1).then(arr => arr[0]);
         } else {
             throw Error("Incorrect input. Only objects or numbers.");
         }
@@ -50,6 +50,10 @@ class Model {
         return pluralize(this.name.toLowerCase());
     }
 
+    static get dbConnection() {
+        return knex;
+    }
+
     /**
      * Insert new row in db or updates fields in existing row
      */
@@ -61,7 +65,7 @@ class Model {
         } else {
             return knex(this.constructor.tableName)
                 .insert(this, "id")
-                .then(id => this.id = id);
+                .then(id => this.id = id[0]);
         }
     }
 
@@ -72,7 +76,8 @@ class Model {
         return knex(this.constructor.tableName)
             .select()
             .where("id", this.id)
-            .limit(1);
+            .limit(1)
+            .then(arr => arr[0]);
     }
 
     /**
@@ -81,7 +86,10 @@ class Model {
      * @memberof Model
      */
     destroy() {
-        return this.fetchDbRow().del();
+        return knex(this.constructor.tableName)
+            .where("id", this.id)
+            .limit(1)
+            .delete();
     }
 }
 
