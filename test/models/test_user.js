@@ -37,7 +37,7 @@ describe("Model User's", () => {
         User.findAll({}).then(result => {
             result.should.be.an("array");
             result[0].should.be.an.instanceOf(User);
-            //result[0].handle.should.be.a("string");
+            result[0].handle.should.be.a("string");
             done();
         });
     });

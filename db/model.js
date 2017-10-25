@@ -4,13 +4,6 @@ const pluralize = require("pluralize");
 class Model {
 
     /**
-     * Creates an instance of Model.
-     * @memberof Model
-     */
-    constructor() {
-    }
-
-    /**
      * Find a single object from DB
      *
      * @static
@@ -84,10 +77,8 @@ class Model {
     */
     fetchDbRow() {
         return knex(this.constructor.tableName)
-            .select()
-            .where("id", this.id)
-            .limit(1)
-            .then(arr => arr[0]);
+            .first()
+            .where("id", this.id);
     }
 
     /**
