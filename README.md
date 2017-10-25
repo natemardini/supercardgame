@@ -1,4 +1,4 @@
-# Node Skeleton
+# Super Card Game!  [![Build Status](https://travis-ci.org/lexyehia/supercardgame.svg?branch=master)](https://travis-ci.org/lexyehia/supercardgame)
 
 ## Project Setup
 
