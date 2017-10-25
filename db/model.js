@@ -18,8 +18,16 @@ class Model {
      * @memberof Model
      */
     static findOne(query) {
-        if (typeof query === "object" || typeof query === "number") {
-            return this.findAll(query).limit(1).then(arr => arr[0]);
+        if (typeof query === "object") {
+            return knex(this.tableName)
+                .first()
+                .where(query)
+                .then(row => Object.assign(new this(), row));
+        } else if (typeof query === "number") {
+            return knex(this.tableName)
+                .first()
+                .where("id", query)
+                .then(row => Object.assign(new this(), row));
         } else {
             throw Error("Incorrect input. Only objects or numbers.");
         }
@@ -36,11 +44,13 @@ class Model {
         if (typeof query === "object") {
             return knex(this.tableName)
                 .select()
-                .where(query);
+                .where(query)
+                .map(row => Object.assign(new this(), row));
         } else if (typeof query === "number") {
             return knex(this.tableName)
                 .select()
-                .where("id", query);
+                .where("id", query)
+                .map(row => Object.assign(new this(), row));
         } else {
             throw Error("Incorrect input. Only objects or numbers.");
         }

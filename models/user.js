@@ -1,12 +1,13 @@
 const Model = require("../db/model");
 
 class User extends Model {
-    constructor(handle, email, password) {
-        super();
-        this.handle = handle;
-        this.email = email;
-        this.password = password;
-        return this;
+
+    static create(handle, email, password) {
+        const user = new User();
+        user.handle = handle;
+        user.email = email;
+        user.password = password;
+        return user;
     }
 }
 

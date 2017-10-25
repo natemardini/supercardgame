@@ -2,11 +2,19 @@ const Model = require("../db/model");
 const Match = require("./match");
 
 class Game extends Model {
-    constructor(gameType, deck) {
-        super();
-        this.gameType = gameType;
-        this.deck = deck;
-        return this;
+    static create(gameType, deck) {
+        const game = new Game();
+        game.gameType = gameType;
+        game.deck = deck;
+        return game;
+    }
+
+    set gameType(value) {
+        this.game_type = value;
+    }
+
+    get gameType() {
+        return this.game_type;
     }
 
     get currentTurn() {

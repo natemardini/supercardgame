@@ -3,7 +3,7 @@ const User = require("../../models/user");
 
 describe("Model User's", () => {
 
-    const testUser = new User("test", "test@example.com", "123");
+    const testUser = User.create("test", "test@example.com", "123");
 
     it("save() should return the object ID", (done) => {
         testUser.save().then(() => {
@@ -14,6 +14,7 @@ describe("Model User's", () => {
 
     it("findOne() should return a valid object", (done) => {
         User.findOne(testUser.id).then(user => {
+            user.should.be.an.instanceOf(User);
             user.should.be.an("object");
             user.handle.should.be.a("string");
             done();
@@ -35,7 +36,8 @@ describe("Model User's", () => {
     it("findAll() should return a result object", (done) => {
         User.findAll({}).then(result => {
             result.should.be.an("array");
-            result[0].should.be.an("object");
+            result[0].should.be.an.instanceOf(User);
+            //result[0].handle.should.be.a("string");
             done();
         });
     });
