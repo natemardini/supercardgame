@@ -1,4 +1,9 @@
-# Super Card Game!  [![Build Status](https://travis-ci.org/lexyehia/supercardgame.svg?branch=master)](https://travis-ci.org/lexyehia/supercardgame)
+# Super Card Game!  
+
+## Grades
+
+[![Build Status](https://travis-ci.org/lexyehia/supercardgame.svg?branch=master)](https://travis-ci.org/lexyehia/supercardgame)
+[![Maintainability](https://api.codeclimate.com/v1/badges/937a44c184e7960ce4d3/maintainability)](https://codeclimate.com/github/lexyehia/supercardgame/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/937a44c184e7960ce4d3/test_coverage)](https://codeclimate.com/github/lexyehia/supercardgame/test_coverage)
 
 ## Project Setup
 
