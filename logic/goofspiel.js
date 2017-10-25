@@ -40,6 +40,9 @@ console.log(`user2: ${user2}`);
 
 // game start
 
+function startGame(round) {
+    // to complete
+}
 
 for(let i = 0; i <= 13; i++) {
 
@@ -60,26 +63,26 @@ for(let i = 0; i <= 13; i++) {
     else if (user1Score > user2Score && user1Score >= 45.5) {
         console.log(`user1 wins!, the final score is ${user1Score}:${user2Score}`);
         break;
-      }
-      else if (user2Score > user1Score && user2Score >= 45.5) {
+    }
+    else if (user2Score > user1Score && user2Score >= 45.5) {
         console.log(`user2 wins!, the final score is ${user1Score}:${user2Score}`);
         break;
-      }
-      else {
-        console.log(`\n ${i+1}th round:`)
+    }
+    else {
+        console.log(`\n ${i+1}th round:`);
         if (user1[i] > user2[i]) {
-          user1Score += prizes[i];
+            user1Score += prizes[i];
         }
         else if (user1[i] < user2[i]) {
-          user2Score += prizes[i];
+            user2Score += prizes[i];
         }
         else {
-          console.log(`TIE this round!`);
+            console.log(`TIE this round!`);
         }
         console.log(`prize is ${prizes[i]}, user1 bet ${user1[i]}, user2 bet ${user2[i]}
           user1 score: ${user1Score}, user2 score: ${user2Score}`);
 
-      }
+    }
 
 }
 
