@@ -1,16 +1,18 @@
 
 exports.up = function(knex, Promise) {
-    Promise.all([
-        knex.schema.tabl('games', function(table) {
-            table.integer('round').unsigned()
+    return Promise.all([
+        knex.schema.alterTable("games", function(table) {
+            table.integer("round").unsigned().defaultTo(1);
+            table.dropIndex("id");
         })
-    ])
+    ]);
 };
 
 exports.down = function(knex, Promise) {
-    Promise.all([
-        knex.schema.table('games', function(table) {
-            table.dropColumn('round')
+    return Promise.all([
+        knex.schema.alterTable("games", function(table) {
+            table.dropColumn("round");
+            table.index("id");
         })
-    ])
+    ]);
 };
