@@ -1,4 +1,6 @@
-// function creat an array of 13 elements
+/**
+ * function: create an array of 13 elements
+ */
 function createSuit () {
     const suit = [];
     for (let i = 1; i <= 13; i++) {
@@ -7,8 +9,9 @@ function createSuit () {
     return suit;
 }
 
-
-// function: shuffle an array
+/**
+ * function: shuffle an array
+ */
 function shuffle (input) {
     for (let i = input.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -18,20 +21,20 @@ function shuffle (input) {
 }
 
 
-let prizes = createSuit();
-let user1 = createSuit();
-let user2 = createSuit();
+// let prizes = createSuit();  // from Game -> cards_in_play
+// let user1 = createSuit();   // from Game -> cards_in_play
+// let user2 = createSuit();   // from Game -> cards_in_play
 
-let user1Score = 0;
-let user2Score = 0;
+// let user1Score = 0; // from db Match -> score
+// let user2Score = 0; // from db Match -> score
 
-prizes = shuffle(prizes);
-user1 = shuffle(user1);
-user2 = shuffle(user2);
+// prizes = shuffle(prizes);
+// user1 = shuffle(user1);
+// user2 = shuffle(user2);
 
-console.log(`prizes: ${prizes}`);
-console.log(`user1: ${user1}`);
-console.log(`user2: ${user2}`);
+// console.log(`prizes: ${prizes}`);
+// console.log(`user1: ${user1}`);
+// console.log(`user2: ${user2}`);
 
 // prizes: [3,7,10,12,1,11,9,2,5,6,4,13,8];
 // user1: [3,8,10,4,11,6,5,13,2,7,12,9,1];
@@ -40,54 +43,72 @@ console.log(`user2: ${user2}`);
 
 // game start
 
-function startGame(round) {
-    // to complete
-}
+/**
+ * function: startGame,
+ * input should be an object, ie:
+ * input = {round: 12,
+    user1score: 43,
+    user2score: 4,
+    user1win: 1,
+    user2win: 0,
+    prize: 12,
+    user1card: 10,
+    user2card: 8 }
+ */
+function startGame(input) {
+    let i = input.round;
+    let user1Score = input.user1score;
+    let user2Score = input.user2score;
+    let user1Win = input.user1win;
+    let user2Win = input.user2win;
+    let prize = input.prize;
+    let user1Card = input.user1card;
+    let user2Card = input.user2card;
 
-for(let i = 0; i <= 13; i++) {
-
-    if (i === 13) {
+    if (user1Win || user2Win) {
+        return 0; //game already finished!
+    }
+    else if (i === 13) {                 // last round of the game, compare final scores
         if (user1Score > user2Score) {
-            console.log(`user1 wins!, the socre is ${user1Score}:${user2Score}`);
+            user1Win = 1;   //game finished, user1 win
         }
         else if (user1Score < user2Score) {
-            console.log(`user2 wins!, the score is ${user1Score}:${user2Score}`);
+            user2Win = 1;   //game finished, user2 win
         }
-        else {
-            console.log(`Tie! ${user1Score}:${user2Score}`);
-        }
-        break;
+        else {} //game finished, Tie!
     }
 
-
+    // if a user's score is > 45.5, win the game
     else if (user1Score > user2Score && user1Score >= 45.5) {
-        console.log(`user1 wins!, the final score is ${user1Score}:${user2Score}`);
-        break;
+        user1Win = 1;       //game finished,  user1 win
     }
     else if (user2Score > user1Score && user2Score >= 45.5) {
-        console.log(`user2 wins!, the final score is ${user1Score}:${user2Score}`);
-        break;
+        user2Win = 1;      //game finished, user2 win
     }
+
     else {
-        console.log(`\n ${i+1}th round:`);
-        if (user1[i] > user2[i]) {
-            user1Score += prizes[i];
+        if (user1Card > user2Card) {
+            user1Score += prize;
         }
-        else if (user1[i] < user2[i]) {
-            user2Score += prizes[i];
+        else if (user1Card < user2Card) {
+            user2Score += prize;
         }
-        else {
-            console.log(`TIE this round!`);
-        }
-        console.log(`prize is ${prizes[i]}, user1 bet ${user1[i]}, user2 bet ${user2[i]}
-          user1 score: ${user1Score}, user2 score: ${user2Score}`);
+        else {}  // console.log(`TIE this round!`);
 
+        if (user1Score > user2Score && user1Score >= 45.5) {
+            user1Win = 1;
+        }
+        else if (user2Score > user1Score && user2Score >= 45.5) {
+            user2Win = 1;
+        }
+        else {}
     }
-
+    return { user1score: user1Score,
+            user2score: user2Score,
+            user1win: user1Win,
+            user2win: user2Win };
 }
-
-
-
+module.exports = { startGame: startGame };
 
 
 
