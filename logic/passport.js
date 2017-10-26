@@ -5,7 +5,7 @@ const User = require("../models/user");
 passport.use({
     usernameField: "handle",
     passwordField: "password"
-},  new LocalStrategy(
+}, new LocalStrategy(
     function (username, password, done) {
         User.findOne({ handle: username }).then(user => {
             if (!user) {
@@ -16,16 +16,17 @@ passport.use({
                 return done(null, user);
             }
         }).catch(e => done(e));
-
-        // User.findOne({ username: username }, function (err, user) {
-        //     if (err) { return done(err); }
-        //     if (!user) {
-        //         return done(null, false, { message: "Incorrect username." });
-        //     }
-        //     if (!user.validPassword(password)) {
-        //         return done(null, false, { message: "Incorrect password." });
-        //     }
-        //     return done(null, user);
-        // });
     }
 ));
+
+passport.serializeUser(function (user, cb) {
+    cb(null, user.id);
+});
+
+passport.deserializeUser(function (id, cb) {
+    User.findOne(id)
+        .then(user => cb(null, user))
+        .catch(err => cb(err));
+});
+
+module.exports = passport;
