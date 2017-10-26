@@ -1,4 +1,6 @@
-const { knex } = require("./../server");
+const knexConfig = require("./../knexfile");
+const ENV = process.env.ENV || "development";
+const knex = require("knex")(knexConfig[ENV]);
 const pluralize = require("pluralize");
 
 class Model {
