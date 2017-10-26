@@ -2,10 +2,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/user");
 
-passport.use({
-    usernameField: "handle",
-    passwordField: "password"
-}, new LocalStrategy(
+passport.use(new LocalStrategy({ usernameField: "handle" },
     function (username, password, done) {
         User.findOne({ handle: username }).then(user => {
             if (!user) {

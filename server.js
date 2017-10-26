@@ -43,7 +43,8 @@ app.use("/styles", sass({
 app.use(express.static("public"));
 
 // Mount all resource routes
-app.use("/api/users", require("./routes/users"));
+app.use("/api/users", require("./routes/users")(passport));
+app.use("/api/games", require("./routes/games")(passport));
 
 // Home page
 app.get("/", (req, res) => {
