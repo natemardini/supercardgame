@@ -6,7 +6,6 @@ describe("Deck Class", () => {
 
     it("Constructor should return a standard deck", (done) => {
         const newSet = new Deck();
-        console.log(newSet)
         newSet.cards.length.should.equal(52);
         newSet.cards[0].should.be.an("object");
         done();

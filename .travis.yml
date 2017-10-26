@@ -6,9 +6,19 @@ node_js:
 cache:
   directories:
   - node_modules
+env:
+  CODECLIMATE_REPO_TOKEN: 2dab52e6047549536ab25e7f22cbdb7e7aad2ee2cbd18ae20f72be0744756e8f
 deploy:
   provider: heroku
   api_key:
     secure: HS1/fGDSuRPQqgwMmw7WNL8kyW/jvH2xFIGOvlWFdZproXWa14y+haJUbVecAVFwD0YPvTtO8McLKXDwCDxzMc1GG6X3/HCbodikJPAzzpJBbE0sAuFIhZdhvsp4gT1S0Mkd9jlfphk8p845mGVFcfjH4A8nEBfcWE8yCOiKwV/AcvlWVOK6rRCY0XfbTMIOVXAu9/CnnCOptntM5UrNws1ElB96y3rpx47OxwpwjJRquS4CmfN9ND6udPSv3I0IYXcNhzrgy3ndgdaaIPBU1bn1b7K4WbvgRAVCt8YLAEcA7wklNtZISO4ilo+Ub5PTOZNAJowQAUmkUk9ZE/lQ04RpQn9lLYj9k4tj9NS+4Ha8x+KORpymtf1TxQtqSxpg5atyCqKW16NaAqeVsPZHOWm8apF+paOZDoJkfJK+6pkfaNztpbuAC2kvVc9Sa6BcGVF2Pv4dqPfJHDRylBXpIMaIccrzGTgr4WXbppUtMWKgTIQtHCzyqXERp1RItOd2JxsZQFb8qQInT5jgtaBa9JGXI2VSzylOzmq7tgT22VfWPy9lp5DRlDDNMeaLsCFX385nuiFd6xOs2t8jB6UPNmBLERl3EQF6PoC6YkcdTD0akXY1oBFj+jSZMZPlScSbKP4Lsi+4UYlPmZswU7R0QDS7/rgNR4RnwAkmcSWJuCI=
 notifications:
   email: false
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+script:
+  - npm test
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
