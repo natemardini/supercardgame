@@ -13,19 +13,22 @@ class Model {
      * @memberof Model
      */
     static findOne(query) {
-        if (typeof query === "object") {
-            return knex(this.tableName)
-                .first()
-                .where(query)
-                .then(row => Object.assign(new this(), row));
-        } else if (typeof query === "number") {
-            return knex(this.tableName)
-                .first()
-                .where("id", query)
-                .then(row => Object.assign(new this(), row));
-        } else {
+        if (typeof query !== "number" && typeof query !== "object") {
             throw Error("Incorrect input. Only objects or numbers.");
+        } else if (typeof query === "number") {
+            query = { id: query };
         }
+
+        return knex(this.tableName)
+            .first()
+            .where(query)
+            .then(row => {
+                if (row) {
+                    return Object.assign(new this(), row);
+                } else {
+                    return null;
+                }
+            });
     }
 
     /**

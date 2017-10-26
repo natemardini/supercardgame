@@ -48,7 +48,7 @@ module.exports = (passport) => {
     /**
      * DELETE /api/users/[id]
      */
-    router.delete("/:id",
+    router.delete("/",
         passport.authenticate("local"),
         (req, res) => {
             User.findAll({}).then(users => {

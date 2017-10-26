@@ -3,11 +3,11 @@ const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/user");
 
 passport.use(new LocalStrategy({ usernameField: "handle" },
-    function (username, password, done) {
+    (username, password, done) => {
         User.findOne({ handle: username }).then(user => {
             if (!user) {
                 return done(null, false, { message: "Incorrect handle." });
-            } else if (!user.validPassword(password)) {
+            } else if (!user.validatePassword(password)) {
                 return done(null, false, { message: "Incorrect password." });
             } else {
                 return done(null, user);

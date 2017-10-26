@@ -14,6 +14,7 @@ describe("Model User's", () => {
 
     it("findOne() should return a valid object", (done) => {
         User.findOne(testUser.id).then(user => {
+            console.log(user);
             user.should.be.an.instanceOf(User);
             user.should.be.an("object");
             user.handle.should.be.a("string");
