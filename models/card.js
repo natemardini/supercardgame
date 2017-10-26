@@ -1,13 +1,35 @@
 const _ = require("lodash");
-const suits = ["diamond", "spade", "heart", "clubs"];
 
-class CardSet {
+class Deck {
+    static get suits() {
+        return ["diamonds", "spades", "hearts", "clubs"];
+    }
+
+    static get values() {
+        return [
+            "A",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "J",
+            "Q",
+            "K"
+        ];
+    }
+
     constructor(options = {}) {
         options = {
             cardsPerSuit: options.cardsPerSuit || 13,
-            suits: options.suits || suits
+            suits: options.suits || Deck.suits
         };
 
+        this.createDeckID();
         this.cards = [];
 
         options.cardsPerSuit > 13 ? options.cardsPerSuit = 13 : options.cardsPerSuit;
@@ -24,42 +46,46 @@ class CardSet {
         const result = [];
 
         if (!options.random) {
-            for (let i = 1; i <= max; i++) {
-                result.push(new Card(suit, i));
+            for (let i = 0; i < max; i++) {
+                result.push(this.newCard(suit, Deck.values[i]));
             }
         }
 
         return result;
     }
-}
 
-class Card {
-    constructor(suit, value) {
+    newCard(suit, value) {
         if (suit || value) {
-            [this.suit, this.value] = Card._validate(suit, value);
+            [suit, value] = this.constructor._validate(suit, value);
+            return {
+                suit,
+                value,
+                deck: this.id
+            };
         }
     }
 
     static _validate(suit, value) {
-        if (!suits.includes(suit)) {
+        if (!this.suits.includes(suit)) {
             suit = null;
         }
 
-        const cardValues = _.range(1, 14).concat(["A", "Q", "J", "K", "Joker"]);
-        if (!cardValues.includes(value)) {
+        value = value.toString();
+
+        if (!this.values.includes(value)) {
             value = null;
-        } else if ([0, 11, 12, 13].includes(value)) {
+        } else if (["0", "11", "12", "13"].includes(value)) {
             switch (value) {
-            case 0:
+            case "0":
                 value = "Joker";
                 break;
-            case 11:
+            case "11":
                 value = "J";
                 break;
-            case 12:
+            case "12":
                 value = "Q";
                 break;
-            case 13:
+            case "13":
                 value = "K";
                 break;
             default:
@@ -74,26 +100,12 @@ class Card {
         }
     }
 
-    static parse(dbObjects) {
-        let parsed = [];
-
-        if (Array.isArray(dbObjects)) {
-            dbObjects.forEach(o => {
-                const _card = new Card();
-                parsed.push(Object.assign(_card, o));
-            });
-        } else if (typeof dbObjects === "object") {
-            const _card = new Card();
-            parsed = Object.assign(_card, dbObjects);
-        } else {
-            throw Error("Not a valid Card");
-        }
-
-        return parsed;
+    createDeckID(a, b) {
+        for (b = a = ""; a++ < 36; b += a * 51 & 52 ? (a ^ 15 ? 8 ^ Math.random() * (a ^ 20 ? 16 : 4) : 4).toString(16) : "-");
+        this.id = b;
     }
 }
 
 module.exports = {
-    CardSet,
-    Card
+    Deck
 };
