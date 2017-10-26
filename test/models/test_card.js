@@ -1,5 +1,6 @@
 const should = require("chai").should();
 const { Deck } = require("../../models/card");
+const _ = require("lodash");
 
 describe("Deck Class", () => {
 
@@ -17,12 +18,84 @@ describe("Deck Class", () => {
         newSet.cards[0].should.be.an("object");
 
         const testRange = ["A", "2", "3", "4", "5", "6",
-            "7", "8", "9", "10", "J", "Q", "K"];
+            "7", "8", "9", "10", "J", "Q", "K"]
 
         newSet.cards.forEach(c => {
             c.suit.should.equal("diamonds");
-            c.value.should.equal(testRange.shift());
+            testRange.should.include(c.value);
         });
+        done();
+    });
+
+    it("Can give out a valid hand with giveHand()", (done) => {
+        const testDeck = new Deck();
+
+        const hand = testDeck.giveHand(12);
+
+        hand.length.should.equal(12);
+        hand[4].should.be.an("object");
+        hand[6].suit.should.be.a("string");
+        hand[8].value.should.be.a("string");
+        hand[3].deck.should.be.a("string");
+        done();
+    });
+
+    it("Can give out a valid one-suit hand with giveHand()", (done) => {
+        const testDeck = new Deck();
+
+        const hand = testDeck.giveHand(19, "hearts");
+        hand.length.should.equal(13);
+        hand[4].should.be.an("object");
+        hand[6].suit.should.equal("hearts");
+        hand[8].value.should.be.a("string");
+        hand[3].deck.should.be.a("string");
+        done();
+    });
+
+    it("Reduces its deck-size when handing out cards", (done) => {
+        const testDeck = new Deck();
+
+        const hand = testDeck.giveHand(10);
+        const join = _.intersection(hand, testDeck.cards);
+
+        testDeck.cards.length.should.equal(42);
+        join.should.be.an("array").that.is.empty;
+        done();
+    });
+
+    it("Putting card back in Deck works", (done) => {
+        let testDeck = new Deck();
+        let hand = testDeck.giveHand(7);
+        let card = hand[3];
+
+        const statusCode = Deck.returnCard({
+            from: hand,
+            to: testDeck,
+            pile: "cards",
+            card: card
+        });
+
+        statusCode.should.be.true;
+        hand.should.not.include(card);
+        testDeck.cards.should.include(card);
+        done();
+    });
+
+    it("Putting card back in Deck discards works", (done) => {
+        let testDeck = new Deck();
+        let hand = testDeck.giveHand(7);
+        let card = hand[3];
+
+        const statusCode = Deck.returnCard({
+            from: hand,
+            to: testDeck,
+            pile: "discards",
+            card: card
+        });
+
+        statusCode.should.be.true;
+        hand.should.not.include(card);
+        testDeck.discards.should.include(card);
         done();
     });
 });
