@@ -157,6 +157,26 @@ body {
 	font-size: 0.5rem;
 	text-align: center;
 }
+
+.card {
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+  }
+
+.card:hover {
+    -webkit-box-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+    -webkit-transform: scale(1.1,1.1);
+    -moz-transform: scale(1.1,1.1);
+    -o-transform: scale(1.1,1.1);
+    -ms-transform: scale(1.1,1.1);
+    transform: scale(1.1,1.1);
+    cursor: pointer;
+  }
+
 .card {
 	position: absolute;
 	display: inline-block;
