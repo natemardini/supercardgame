@@ -1,0 +1,206 @@
+<!--
+    20171025 supercardgame basic test file.
+-->
+
+<html>
+    <head>
+        <title>Cards</title>
+
+        <link rel="stylesheet" href="test.css">
+    </head>
+    <body>
+        <script src="test.js"></script>
+        <div id="container"></div>
+        <div id="topbar"></div>
+        <div id="testbar"></div>
+        <script>
+            var $container = document.getElementById('container');
+
+            // create Deck
+            var deck = Deck();
+
+            // add to DOM
+            deck.mount($container);
+
+            var prefix = Deck.prefix
+
+            var transform = prefix('transform')
+
+            var translate = Deck.translate
+
+            // New js added to run some tests.
+            let $topbar = document.getElementById('topbar');
+            let $testbar = document.getElementById('testbar');
+            let $newGame = document.createElement('button');
+            let $test = document.createElement('button');
+            let $bid = document.createElement('button');
+            let $endTurn = document.createElement('button');
+            let $gameTypes = document.createElement('select');
+            let $gameType1 = document.createElement('option');
+            let $gameType2 = document.createElement('option');
+
+            $newGame.textContent = 'New Game';
+            $test.textContent = 'Test';
+            $bid.textContent = 'Bid';
+            $endTurn.textContent = 'End Turn';
+            $gameType1.textContent = "Goofspiel";
+            $gameType2.textContent = "Poker";
+            $gameTypes.add($gameType1);
+            $gameTypes.add($gameType2);
+
+            $topbar.appendChild($gameTypes);
+            $topbar.appendChild($newGame);
+            $topbar.appendChild($test);
+            $topbar.appendChild($bid);
+            $topbar.appendChild($endTurn);
+
+
+            deck.shuffle();
+            //deck.flip();
+            deck.sort();
+
+            $newGame.addEventListener('click', function () {
+
+                deck.cards.forEach(function (card, i) {
+                    card.enableDragging();
+                    card.enableFlipping();
+
+                    switch (card.suit){
+                        case 0:
+                            if (card.rank === 2){
+                                card.setSide('front');
+                            } else if (card.rank === 12) {
+                                card.setSide('back');
+                            } else {
+                                card.unmount();
+                            }
+                            break;
+                        case 2:
+                            card.setSide('back');
+                            moveCard(card.suit, card.rank, 0, -5000, 'back');
+                            break;
+                        case 3:
+                            card.unmount();
+                            break;
+                        case 1:
+                            card.setSide('front');
+                            break;
+                    }
+                });
+                deck.bysuit();
+                //deck.sort();
+            });
+
+            $test.addEventListener('click', function () {
+                //alert('test')
+                deck.bysuit();
+                deck.flip();
+            });
+
+            $bid.addEventListener('click', function () {
+                moveCard(1, 7, -250, -250, 'back');
+            });
+
+            $endTurn.addEventListener('click', function () {
+                moveCard(2, 3, 250, -250, 'back');
+
+                moveCard(1, 7, -250, -250, 'front');
+                moveCard(2, 3, 250, -250, 'front');
+            });
+            // deck.cards.forEach(function (card, i) {
+            //     //card.setSide(Math.random() < 0.5 ? 'front' : 'back');
+            //     card.setSide('front');
+
+
+            //     // explode
+            //     // card.animateTo({
+            //     //     delay: 1000 + i * 2, // wait 1 second + i * 2 ms
+            //     //     duration: 500,
+            //     //     ease: 'quartOut',
+
+            //     //     x: Math.random() * window.innerWidth - window.innerWidth / 2,
+            //     //     y: Math.random() * window.innerHeight - window.innerHeight / 2
+            //     // });
+            // });
+
+            setTimeout(function () {
+                printMessage('Waiting for opponent...')
+            }, 1000)
+
+            setTimeout(function () {
+                printMessage('Turn 1, Score is 0 - 0')
+            }, 6000)
+
+            setTimeout(function () {
+                printMessage('...have fun ;)')
+            }, 11000)
+
+            setTimeout(function () {
+                printMessage('Turn 2, Score is 4 - 0')
+            }, 16000)
+
+            setTimeout(function () {
+                printMessage('Turn 3, Score is 4 - 5')
+            }, 21000)
+
+            function printMessage (text) {
+                var animationFrames = Deck.animationFrames
+                var ease = Deck.ease
+                var $message = document.createElement('p')
+                $message.classList.add('message')
+                $message.textContent = text
+
+                document.body.appendChild($message)
+
+                $message.style[transform] = translate(window.innerWidth + 'px', 0)
+
+                var diffX = window.innerWidth
+
+                animationFrames(1000, 700)
+                    .progress(function (t) {
+                    t = ease.cubicInOut(t)
+                    $message.style[transform] = translate((diffX - diffX * t) + 'px', 0)
+                    })
+
+                animationFrames(6000, 700)
+                    .start(function () {
+                    diffX = window.innerWidth
+                    })
+                    .progress(function (t) {
+                    t = ease.cubicInOut(t)
+                    $message.style[transform] = translate((-diffX * t) + 'px', 0)
+                    })
+                    .end(function () {
+                    document.body.removeChild($message)
+                    })
+                };
+
+                function moveCard(suit, rank, x, y, side){
+                    deck.cards.forEach(function (card, i) {
+
+                        if (card.rank === rank && card.suit === suit){
+                            card.animateTo({
+                                delay: 500 + i * 2, // wait 1 second + i * 2 ms
+                                duration: 2000,
+                                ease: 'quartOut',
+
+                                //x: Math.random() * window.innerWidth - window.innerWidth / 2,
+                                x: x,
+                                //y: Math.random() * window.innerHeight - window.innerHeight / 2
+                                y: y,
+
+                                onComplete: function onComplete() {
+                                    card.setSide(side);
+                                }
+                            });
+
+
+                        }
+
+
+
+                    });
+                };
+        </script>
+    </body>
+</html>
