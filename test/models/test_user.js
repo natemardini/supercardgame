@@ -14,7 +14,6 @@ describe("Model User's", () => {
 
     it("findOne() should return a valid object", (done) => {
         User.findOne(testUser.id).then(user => {
-            console.log(user);
             user.should.be.an.instanceOf(User);
             user.should.be.an("object");
             user.handle.should.be.a("string");
@@ -39,6 +38,20 @@ describe("Model User's", () => {
             result.should.be.an("array");
             result[0].should.be.an.instanceOf(User);
             result[0].handle.should.be.a("string");
+            done();
+        });
+    });
+
+    it("matches() should return an array of matches", (done) => {
+        testUser.matches.then(result => {
+            result.should.be.an("array");
+            done();
+        });
+    });
+
+    it("games() should return an array of games", (done) => {
+        testUser.games.then(result => {
+            result.should.be.an("array");
             done();
         });
     });
