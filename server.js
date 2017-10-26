@@ -45,8 +45,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/html", (req, res) => {
-    res.redirect("/html/game.html")
-  })
+    res.redirect("/html/game.html");
+});
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${  PORT}`);
