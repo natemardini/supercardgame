@@ -850,7 +850,7 @@ let Deck = (function () {
                 _card9.dealhand = function (cb) {
                     let i = _card9.i;
                     let delay = i * 10;
-console.log(fontSize())
+
                     _card9.animateTo({
                         delay: delay,
                         duration: 400,
