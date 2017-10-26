@@ -18,7 +18,7 @@ describe("Deck Class", () => {
         newSet.cards[0].should.be.an("object");
 
         const testRange = ["A", "2", "3", "4", "5", "6",
-            "7", "8", "9", "10", "J", "Q", "K"]
+            "7", "8", "9", "10", "J", "Q", "K"];
 
         newSet.cards.forEach(c => {
             c.suit.should.equal("diamonds");
