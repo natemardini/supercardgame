@@ -35,8 +35,9 @@ class CardSet {
 
 class Card {
     constructor(suit, value) {
-        [this.suit, this.value] = Card._validate(suit, value);
-        return this;
+        if (suit || value) {
+            [this.suit, this.value] = Card._validate(suit, value);
+        }
     }
 
     static _validate(suit, value) {
@@ -71,6 +72,24 @@ class Card {
         } else {
             return [suit, value];
         }
+    }
+
+    static parse(dbObjects) {
+        let parsed = [];
+
+        if (Array.isArray(dbObjects)) {
+            dbObjects.forEach(o => {
+                const _card = new Card();
+                parsed.push(Object.assign(_card, o));
+            });
+        } else if (typeof dbObjects === "object") {
+            const _card = new Card();
+            parsed = Object.assign(_card, dbObjects);
+        } else {
+            throw Error("Not a valid Card");
+        }
+
+        return parsed;
     }
 }
 
