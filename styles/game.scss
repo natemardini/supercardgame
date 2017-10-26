@@ -1,0 +1,35 @@
+//colors
+$color_ocean_green_approx: #45a173;
+$color_mine_shaft_approx: #333;
+$color_lunar_green_approx: #334d41;
+$white: #fff;
+$color_tundora_approx: #444;
+$black_15: rgba(0,0,0,0.15);
+$black: #000;
+$color_guardsman_red_approx: #d40000;
+
+//fonts
+$font_0: Open Sans;
+$font_1: sans-serif;
+$font_2: Ubuntu Condensed;
+html {
+	height: 100%;
+}
+
+body {
+	height: 100%;
+	background-color: $color_ocean_green_approx;
+	color: $color_mine_shaft_approx;
+	font-family: $font_0, $font_1;
+	//Instead of the line below you could use @include user-select($select)
+	user-select: none;
+	overflow: hidden;
+	text-size-adjust: 100%;
+}
+#container {
+	position: fixed;
+	top: calc(50% +1.5rem);
+	left: 50%;
+	//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+	transform: translate3d(-50%, -50%, 0);
+}
