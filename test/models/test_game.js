@@ -60,9 +60,4 @@ describe("Model Game's", () => {
             done();
         });
     });
-
-    after((done) => {
-        process.exit();
-        done();
-    });
 });
