@@ -2,12 +2,18 @@ const _ = require("lodash");
 const suits = ["diamond", "spade", "heart", "clubs"];
 
 class CardSet {
-    constructor(cardNumber = 52, suit = suits) {
+    constructor(options = {}) {
+        options = {
+            cardsPerSuit: options.cardsPerSuit || 13,
+            suits: options.suits || suits
+        };
+
         this.cards = [];
 
-        const cardsPerSuit = Math.round(cardNumber / suit.length);
-        suit.forEach(s => {
-            const cards = this.addCardsInSuit(s, cardsPerSuit);
+        options.cardsPerSuit > 13 ? options.cardsPerSuit = 13 : options.cardsPerSuit;
+
+        options.suits.forEach(s => {
+            const cards = this.addCardsInSuit(s, options.cardsPerSuit);
             this.cards.push(...cards);
         });
 
