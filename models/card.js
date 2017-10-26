@@ -9,28 +9,42 @@ class Deck {
         return ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
     }
 
-    constructor(options = {}) {
-        options = {
-            cardsPerSuit: Math.min((options.cardsPerSuit || 13), 13),
-            suits: options.suits || Deck.suits,
-            size: options.size || 52
-        };
+    constructor(opts = {}) {
+        // Default options
+        opts.suits        = opts.suits || Deck.suits;
+        opts.cardsPerSuit = Math.min((opts.cardsPerSuit || 13), 13);
+        opts.size         = opts.size || opts.suits.length * opts.cardsPerSuit;
+        opts.decks        = opts.decks || 1;
+        opts.extraPiles   = opts.extraPiles || [];
 
-        this.createDeckID();
+        // Create Deck ID
+        this._createDeckID();
+
+        // Create Piles
         this.cards = [];
         this.discards = [];
+        opts.extraPiles.forEach(pile => this[pile] = []);
 
-        options.suits.forEach(s => {
-            const cards = this.addCardsInSuit(s, options.cardsPerSuit);
-            this.cards.push(...cards);
-        });
+        // Add cards to deck
+        this.addFullDecks(opts.decks, opts.maxSuitSize, opts.suits);
 
-        this.cards = _.sampleSize(this.cards, options.size);
+        if (this.cards.length < opts.size) {
+            this.addExtraCards(opts.size - this.cards.length, opts.suits);
+        }
 
-        return this;
+        this.cards = _.sampleSize(this.cards, opts.size);
     }
 
-    addCardsInSuit(suit, max) {
+    addFullDecks(amountDecks = 1, maxSuitSize = 13, suits = Deck.suits) {
+        for (let i = 0; i < amountDecks; i++) {
+            suits.forEach(suit => {
+                const series = this.addCardsInSuitSeries(suit, maxSuitSize);
+                this.cards.push(...series);
+            });
+        }
+    }
+
+    addCardsInSuitSeries(suit, max) {
         const result = [];
 
         for (let i = 0; i < max; i++) {
@@ -40,15 +54,23 @@ class Deck {
         return result;
     }
 
-    newCard(suit, value) {
-        if (suit || value) {
-            [suit, value] = this.constructor._validate(suit, value);
-            return {
-                suit,
-                value,
-                deck: this.id
-            };
+    addExtraCards(amount, suits) {
+        for (let i = 0; i < amount; i++) {
+            this.cards.push(this.newCard(_.sample(suits)));
         }
+    }
+
+    newCard(suit, value) {
+        suit = suit || _.sample(Deck.suits);
+        value = value || _.sample(Deck.values);
+
+        [suit, value] = Deck._validate(suit, value);
+
+        return {
+            suit,
+            value,
+            deck: this.id
+        };
     }
 
     addJokers(amount) {
@@ -65,17 +87,7 @@ class Deck {
         this.cards = _.shuffle(this.cards);
     }
 
-    static returnCard(transfer) {
-        if (transfer.card.deck === transfer.to.id) {
-            _.pull(transfer.from, transfer.card);
-            transfer.to[transfer.pile].push(transfer.card);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    giveHand(cards, suit = "") {
+    giveCards(cards, suit = "") {
         let _arr = [];
 
         if (suit) {
@@ -91,6 +103,16 @@ class Deck {
         return hand;
     }
 
+    static returnCard(transfer) {
+        if (transfer.card.deck === transfer.to.id) {
+            _.pull(transfer.from, transfer.card);
+            transfer.to[transfer.pile].push(transfer.card);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     static _validate(suit, value) {
         if (!this.suits.includes(suit)) {
             suit = null;
@@ -98,7 +120,7 @@ class Deck {
 
         value = value.toString();
 
-        if (!this.values.includes(value)) {
+        if (!this.values.concat(["0", "11", "12", "13"]).includes(value)) {
             value = null;
         } else if (["0", "11", "12", "13"].includes(value)) {
             switch (value) {
@@ -126,7 +148,7 @@ class Deck {
         }
     }
 
-    createDeckID(a, b) {
+    _createDeckID(a, b) {
         for (b = a = ""; a++ < 36; b += a * 51 & 52 ? (a ^ 15 ? 8 ^ Math.random() * (a ^ 20 ? 16 : 4) : 4).toString(16) : "-");
         this.id = b;
     }
