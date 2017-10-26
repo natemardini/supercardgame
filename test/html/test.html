@@ -1,6 +1,7 @@
 <!--
     20171025 supercardgame basic test file.
 -->
+
 <html>
     <head>
         <title>Cards</title>
@@ -53,7 +54,7 @@
             $topbar.appendChild($bid);
             $topbar.appendChild($endTurn);
 
-            
+
             deck.shuffle();
             //deck.flip();
             deck.sort();
@@ -176,7 +177,7 @@
 
                 function moveCard(suit, rank, x, y, side){
                     deck.cards.forEach(function (card, i) {
-                        
+
                         if (card.rank === rank && card.suit === suit){
                             card.animateTo({
                                 delay: 500 + i * 2, // wait 1 second + i * 2 ms
@@ -193,7 +194,7 @@
                                 }
                             });
 
-                            
+
                         }
 
 

@@ -6,6 +6,7 @@ describe("Deck Class", () => {
 
     it("Constructor should return a standard deck", (done) => {
         const newSet = new Deck();
+        console.log(newSet)
         newSet.cards.length.should.equal(52);
         newSet.cards[0].should.be.an("object");
         done();
@@ -30,7 +31,7 @@ describe("Deck Class", () => {
     it("Can give out a valid hand with giveHand()", (done) => {
         const testDeck = new Deck();
 
-        const hand = testDeck.giveHand(12);
+        const hand = testDeck.giveCards(12);
 
         hand.length.should.equal(12);
         hand[4].should.be.an("object");
@@ -43,7 +44,7 @@ describe("Deck Class", () => {
     it("Can give out a valid one-suit hand with giveHand()", (done) => {
         const testDeck = new Deck();
 
-        const hand = testDeck.giveHand(19, "hearts");
+        const hand = testDeck.giveCards(19, "hearts");
         hand.length.should.equal(13);
         hand[4].should.be.an("object");
         hand[6].suit.should.equal("hearts");
@@ -55,7 +56,7 @@ describe("Deck Class", () => {
     it("Reduces its deck-size when handing out cards", (done) => {
         const testDeck = new Deck();
 
-        const hand = testDeck.giveHand(10);
+        const hand = testDeck.giveCards(10);
         const join = _.intersection(hand, testDeck.cards);
 
         testDeck.cards.length.should.equal(42);
@@ -65,7 +66,7 @@ describe("Deck Class", () => {
 
     it("Putting card back in Deck works", (done) => {
         let testDeck = new Deck();
-        let hand = testDeck.giveHand(7);
+        let hand = testDeck.giveCards(7);
         let card = hand[3];
 
         const statusCode = Deck.returnCard({
@@ -83,7 +84,7 @@ describe("Deck Class", () => {
 
     it("Putting card back in Deck discards works", (done) => {
         let testDeck = new Deck();
-        let hand = testDeck.giveHand(7);
+        let hand = testDeck.giveCards(7);
         let card = hand[3];
 
         const statusCode = Deck.returnCard({
