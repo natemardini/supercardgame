@@ -1,3 +1,4 @@
+
 const should = require("chai").should();
 const Game = require("../../models/game");
 
@@ -60,4 +61,10 @@ describe("Model Game's", () => {
             done();
         });
     });
+
+    after((done) => {
+        process.exit();
+        done();
+    });
 });
+
