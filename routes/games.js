@@ -36,14 +36,12 @@ module.exports = (passport) => {
     });
 
     /**
-     * PATCH /api/games/[id]
+     * POST /api/games/[id]
      */
-    router.patch("/:id",
-        passport.authenticate("local"),
-        (req, res) => {
-
-        }
-    );
+    router.post("/:id", (req, res) => {
+        const { bidCard, prizeCard } = req.query;
+        console.log(JSON.stringify(bidCard));
+    });
 
     /**
      * DELETE /api/games/[id]
