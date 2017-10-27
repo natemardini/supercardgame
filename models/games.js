@@ -1,18 +1,14 @@
 const mongoose = require("mongoose");
 const Schema   = mongoose.Schema;
-const Deck     = require("../logic/card");
+const { Deck } = require("../logic/card");
 const _        = require("lodash");
 
 // SCHEMAS
-
-const gameSchema = new Schema({
-    gameType: Number,
-    round:    Number,
-    status:   Number,
-    players:  [ playerSchema ],
-    deck:     Schema.Types.Mixed,
-    comments: [{ body: String, date:  Date }],
-    date:     { type:  Date, default: Date.now }
+const cardSchema = new Schema({
+    deck:   String,
+    value:  String,
+    valueN: Number,
+    suit:   String
 });
 
 const playerSchema = new Schema({
@@ -21,25 +17,30 @@ const playerSchema = new Schema({
     active:   Boolean,
     win:      Boolean,
     score:    Number,
-    hand:     [ cardSchema ]
+    hand:     [cardSchema]
 });
 
-const cardSchema = new Schema({
-    deck:   String,
-    value:  String,
-    valueN: Number,
-    suit:   String
+const gameSchema = new Schema({
+    gameType: Number,
+    round:    Number,
+    status:   Number,
+    players:  [ playerSchema ],
+    deck:     Schema.Types.Mixed,
+    date:     { type:  Date, default: Date.now }
 });
+
 
 // GAME METHODS
 gameSchema.pre("save", function (next) {
     if (this.isNew) {
+        this.round = 1;
+        this.status = 1;
         this.setup();
     }
     next();
 });
 
-gameSchema.method.setup = function () {
+gameSchema.methods.setup = function () {
     switch (this.gameType) {
     case 1:
         const deck = Deck.create();
@@ -61,6 +62,5 @@ gameSchema.method.setup = function () {
         break;
     }
 };
-
 
 module.exports = mongoose.model("Game", gameSchema);
