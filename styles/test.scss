@@ -83,19 +83,19 @@ $url_55: url(../html/faces/4_3.svg);
 	font-family: $font_2, $font_1;
 	white-space: pre-line;
 	width: 0.55rem;
-	letter-spacing: -0.1rem;
+    letter-spacing: -0.1rem;
 }
 
 //original selectors
 //.card.joker.rank1:before, .card.joker.rank2:before, .card.joker.rank3:before, .card.joker.rank1:after, .card.joker.rank2:after, .card.joker.rank3:after
-%extend_2 {
-	content: "J\a O\a K\a E\a R";
-	letter-spacing: 0;
-	font-size: 0.4rem;
-	line-height: 0.4rem;
-	padding: 0.15rem 0.05rem;
-	width: 0.5rem;
-}
+// %extend_2 {
+// 	content: "J\a O\a K\a E\a R";
+// 	letter-spacing: 0;
+// 	font-size: 0.4rem;
+// 	line-height: 0.4rem;
+// 	padding: 0.15rem 0.05rem;
+// 	width: 0.5rem;
+// }
 
 
 * {
@@ -108,89 +108,91 @@ html {
 	height: 100%;
 }
 body {
-	height: 100%;
+	// height: 100%;
 	background-color: $color_ocean_green_approx;
 	color: $color_mine_shaft_approx;
 	font-family: $font_0, $font_1;
 	//Instead of the line below you could use @include user-select($select)
-	user-select: none;
-	overflow: hidden;
-	text-size-adjust: 100%;
+	// user-select: none;
+	// overflow: hidden;
+	// text-size-adjust: 100%;
 }
 #container {
-	position: fixed;
-	top: calc(50% +1.5rem);
-	left: 50%;
+    position: fixed;
+    left: 50%;
+	// top: calc(50% +1.5rem);
 	//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
-	transform: translate3d(-50%, -50%, 0);
+	// transform: translate3d(-50%, -50%, 0);
 }
-#topbar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	background-color: $color_lunar_green_approx;
-	padding: 0.25rem;
-	text-align: center;
-	button {
-		background: none;
-		border: 1px solid $white;
-		outline: none;
-		margin: 0.1rem;
-		padding: 0.4rem;
-		font: inherit;
-		font-size: 0.75rem;
-		line-height: 1;
-		color: $white;
-		cursor: pointer;
-		&:hover {
-			background-color: $white;
-			color: $color_tundora_approx;
-		}
-	}
-}
-.message {
-	position: fixed;
-	top: 2.5rem;
-	left: 0;
-	width: 100%;
-	padding: 1rem 0.5rem;
-	font-size: 0.5rem;
-	text-align: center;
-}
+// #topbar {
+// 	position: fixed;
+// 	top: 0;
+// 	left: 0;
+// 	width: 100%;
+// 	background-color: $color_lunar_green_approx;
+// 	padding: 0.25rem;
+// 	text-align: center;
+// 	button {
+// 		background: none;
+// 		border: 1px solid $white;
+// 		outline: none;
+// 		margin: 0.1rem;
+// 		padding: 0.4rem;
+// 		font: inherit;
+// 		font-size: 0.75rem;
+// 		line-height: 1;
+// 		color: $white;
+// 		cursor: pointer;
+// 		&:hover {
+// 			background-color: $white;
+// 			color: $color_tundora_approx;
+// 		}
+// 	}
+// }
+// .message {
+// 	position: fixed;
+// 	top: 2.5rem;
+// 	left: 0;
+// 	width: 100%;
+// 	padding: 1rem 0.5rem;
+// 	font-size: 0.5rem;
+// 	text-align: center;
+// }
 
-.card {
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    -ms-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-    width: 3.7em;
-  }
+// .card {
+//     // -webkit-transition: all 0.3s ease;
+//     // -moz-transition: all 0.3s ease;
+//     // -o-transition: all 0.3s ease;
+//     // -ms-transition: all 0.3s ease;
+//   }
 
 .card:hover {
-    -webkit-box-shadow: 2px 2px 8px rgba(0,0,0,0.9);
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.9);
-    -webkit-transform: scale(1.1,1.1);
-    -moz-transform: scale(1.1,1.1);
-    -o-transform: scale(1.1,1.1);
-    -ms-transform: scale(1.1,1.1);
-    transform: scale(1.1,1.1);
+    box-shadow: 8px 8px 15px rgba(0,0,0,0.9);
+    transform: scale(1.5, 1.5);
     cursor: pointer;
+    // -webkit-box-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+    // -webkit-transform: scale(1.5,1.5);
+    // -moz-transform: scale(1.5,1.5);
+    // -o-transform: scale(1.5,1.5);
+    // -ms-transform: scale(1.5,1.5);
+
   }
 
 .card {
 	position: absolute;
 	display: inline-block;
-	left: -1.9375rem;
-	top: -2.75rem;
-	width: 3.875rem;
+    left: -3em;
+    width: 4em;
 	height: 5.5rem;
 	background-color: $white;
+	border-radius: 5px;
+    box-shadow: 10px 10px 20px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+	// top: -2.75rem;
+    // width: 3.875rem;
 	//Instead of the line below you could use @include border-radius($radius, $vertical-radius)
-	border-radius: 4px;
 	//Instead of the line below you could use @include box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
-	box-shadow: 0 1px 1px $black_15;
+    // box-shadow: 0 1px 1px $black_15;
 	cursor: default;
 	&:before {
 		@extend %extend_1;
@@ -305,43 +307,43 @@ body {
 			background-image: $url_39;
 		}
 	}
-	&.joker {
-		color: $black;
-		&.rank3 {
-			color: $color_guardsman_red_approx;
-			&:before {
-				@extend %extend_2;
-			}
-			&:after {
-				@extend %extend_2;
-			}
-			.face {
-				background-image: $url_55;
-			}
-		}
-		&.rank1 {
-			&:before {
-				@extend %extend_2;
-			}
-			&:after {
-				@extend %extend_2;
-			}
-			.face {
-				background-image: $url_53;
-			}
-		}
-		&.rank2 {
-			&:before {
-				@extend %extend_2;
-			}
-			&:after {
-				@extend %extend_2;
-			}
-			.face {
-				background-image: $url_54;
-			}
-		}
-	}
+	// &.joker {
+	// 	color: $black;
+	// 	&.rank3 {
+	// 		color: $color_guardsman_red_approx;
+	// 		&:before {
+	// 			@extend %extend_2;
+	// 		}
+	// 		&:after {
+	// 			@extend %extend_2;
+	// 		}
+	// 		.face {
+	// 			background-image: $url_55;
+	// 		}
+	// 	}
+	// 	&.rank1 {
+	// 		&:before {
+	// 			@extend %extend_2;
+	// 		}
+	// 		&:after {
+	// 			@extend %extend_2;
+	// 		}
+	// 		.face {
+	// 			background-image: $url_53;
+	// 		}
+	// 	}
+	// 	&.rank2 {
+	// 		&:before {
+	// 			@extend %extend_2;
+	// 		}
+	// 		&:after {
+	// 			@extend %extend_2;
+	// 		}
+	// 		.face {
+	// 			background-image: $url_54;
+	// 		}
+	// 	}
+	// }
 	&.hearts {
 		color: $color_guardsman_red_approx;
 		&.rank1 .face {
@@ -532,18 +534,18 @@ body {
 	}
 }
 @media(max-width: 540px) {
-	#topbar {
-		text-align: left;
-	}
-	.gh-ribbon {
-		//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
-		transform: scale(0.5);
-		//Instead of the line below you could use @include transform-origin($origin-x, $origin-y, $origin-z, $only3d)
-		transform-origin: 100% 0;
-	}
+	// #topbar {
+	// 	text-align: left;
+	// }
+	// .gh-ribbon {
+	// 	//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+	// 	transform: scale(1.5);
+	// 	//Instead of the line below you could use @include transform-origin($origin-x, $origin-y, $origin-z, $only3d)
+	// 	transform-origin: 100% 0;
+	// }
 }
-@media(min-width: 640px) {
+@media(min-width: 550px) {
 	html {
-		font-size: 125%;
+		font-size: 130%;
 	}
 }
