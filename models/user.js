@@ -24,12 +24,20 @@ class User extends Model {
     }
 
     get matches() {
-        return Match.findAll({ "user_id": this.id });
+        return User.dbConnection("matches")
+            .where({ "matches.user_id": this.id })
+            .select();
     }
 
     set game(game) {
         const match = new Match();
+        match.user  = this;
+        match.game  = game;
+        match.score = 0;
 
+        match.save().then(() => {
+            return true;
+        }).catch(e => console.log(e));
     }
 }
 

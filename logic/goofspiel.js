@@ -56,14 +56,14 @@ function shuffle (input) {
     user2card: 8 }
  */
 function startGame(input) {
-    let i = input.round;
+    const i = input.round;
     let user1Score = input.user1score;
     let user2Score = input.user2score;
     let user1Win = input.user1win;
     let user2Win = input.user2win;
-    let prize = input.prize;
-    let user1Card = input.user1card;
-    let user2Card = input.user2card;
+    const prize = input.prize;
+    const user1Card = input.user1card;
+    const user2Card = input.user2card;
 
     if (user1Win || user2Win) {
         return 0; //game already finished!
@@ -104,9 +104,9 @@ function startGame(input) {
         else {}
     }
     return { user1score: user1Score,
-            user2score: user2Score,
-            user1win: user1Win,
-            user2win: user2Win };
+        user2score: user2Score,
+        user1win: user1Win,
+        user2win: user2Win };
 }
 module.exports = { startGame: startGame };
 

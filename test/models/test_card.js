@@ -5,14 +5,14 @@ const _ = require("lodash");
 describe("Deck Class", () => {
 
     it("Constructor should return a standard deck", (done) => {
-        const newSet = new Deck();
+        const newSet = Deck.create();
         newSet.cards.length.should.equal(52);
         newSet.cards[0].should.be.an("object");
         done();
     });
 
     it("Constructor should return a diamond deck of 13 cards", (done) => {
-        const newSet = new Deck({ suits: ["diamonds"] });
+        const newSet = Deck.create({ suits: ["diamonds"] });
 
         newSet.cards.length.should.equal(13);
         newSet.cards[0].should.be.an("object");
@@ -28,7 +28,7 @@ describe("Deck Class", () => {
     });
 
     it("Can give out a valid hand with giveHand()", (done) => {
-        const testDeck = new Deck();
+        const testDeck = Deck.create();
 
         const hand = testDeck.giveCards(12);
 
@@ -41,7 +41,7 @@ describe("Deck Class", () => {
     });
 
     it("Can give out a valid one-suit hand with giveHand()", (done) => {
-        const testDeck = new Deck();
+        const testDeck = Deck.create();
 
         const hand = testDeck.giveCards(19, "hearts");
         hand.length.should.equal(13);
@@ -53,7 +53,7 @@ describe("Deck Class", () => {
     });
 
     it("Reduces its deck-size when handing out cards", (done) => {
-        const testDeck = new Deck();
+        const testDeck = Deck.create();
 
         const hand = testDeck.giveCards(10);
         const join = _.intersection(hand, testDeck.cards);
@@ -64,7 +64,7 @@ describe("Deck Class", () => {
     });
 
     it("Putting card back in Deck works", (done) => {
-        let testDeck = new Deck();
+        let testDeck = Deck.create();
         let hand = testDeck.giveCards(7);
         let card = hand[3];
 
@@ -82,7 +82,7 @@ describe("Deck Class", () => {
     });
 
     it("Putting card back in Deck discards works", (done) => {
-        let testDeck = new Deck();
+        let testDeck = Deck.create();
         let hand = testDeck.giveCards(7);
         let card = hand[3];
 
