@@ -1,6 +1,7 @@
 const Model = require("../db/model");
 const Match = require("./match");
 const { Deck } = require("./card");
+const _ = require("lodash");
 
 class Game extends Model {
 
@@ -8,15 +9,17 @@ class Game extends Model {
         super();
     }
 
-    static create(gameType) {
+    static create(gameType, status = 1) {
         const game = new Game();
         game.gameType = gameType;
+        game.status = status;
+        game.turn_sequence = {};
         game.setup();
         return game;
     }
 
     set gameType(value) {
-        this.game_type = value;
+        this.game_type = Number(value);
     }
 
     get gameType() {
@@ -24,33 +27,60 @@ class Game extends Model {
     }
 
     get currentTurn() {
-        return this.fetchDbRow()
-            .then(r => {
-                Match.findOne(r.current_turn);
-            });
     }
+
+    nextRound() {
+        const currentPlayer = _.findKey(this.turn_sequence, "active");
+        _.set(this.turn_sequence, `${currentPlayer}.active`, false);
+        let nextPlayer = currentPlayer + 1;
+
+        if (!_.has(this.turn_sequence, nextPlayer)) {
+            nextPlayer = 1;
+        }
+
+        _.set(this.turn_sequence, `${nextPlayer}.active`, true);
+        this.round++;
+    }
+
+    get connectedMatches() {
+        return _.map(this.turn_sequence, (m) => m.match_id);
+    }
+
+    set addToTurnSequence(matchId) {
+        const key = Object.keys(this.turn_sequence).length + 1;
+        this.turn_sequence[key] = {
+            match_id: matchId,
+            active: false
+        };
+    }
+
 
     get cards() {
         if (!(this.deck instanceof Deck)) {
             this.deck = Object.assign(new Deck(), this.deck);
         }
 
+
         return this.deck;
     }
 
+    start() {
+        const startingPlayer = _.random(1, _.size(this.turn_sequence));
+        _.set(this.turn_sequence, `${startingPlayer}.active`, true);
+    }
+
     setup() {
-        switch (this.game_type) {
+        switch (this.gameType) {
         case 1:
-            const deck = Deck.create({
+            const deck    = Deck.create({
                 extraPiles: [ "prize", "phand1", "phand2", "pbid1", "pbid2" ]
             });
 
-            deck.prize = deck.giveCards(13, "random");
-            deck.phand1 = deck.giveCards(13, "random");
-            deck.phand2 = deck.giveCards(13, "random");
+            deck.prize    = deck.giveCards(13, "random");
+            deck.phand1   = deck.giveCards(13, "random");
+            deck.phand2   = deck.giveCards(13, "random");
             deck.discards = deck.giveCards();
-
-            this.deck = deck;
+            this.deck     = deck;
             break;
 
         default:

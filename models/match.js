@@ -1,6 +1,7 @@
 const Model = require("../db/model");
 const User = require("./user");
 const Game = require("./game");
+const _ = require("lodash");
 
 class Match extends Model {
     set user(user) {
@@ -31,6 +32,14 @@ class Match extends Model {
 
     get game() {
         return Game.findOne(this.game_id);
+    }
+
+    get hand() {
+        return this.game.then(game => {
+            const playerNo = _.findKey(game.turn_sequence, this.id);
+            const hand = game.cards[`phand${playerNo}`];
+            return Promise.resolve(hand);
+        });
     }
 }
 

@@ -6,7 +6,7 @@ describe("Model User's", () => {
     const testUser = User.create("test", "test@example.com", "123");
 
     it("save() should return the object ID", (done) => {
-        testUser.save().then(() => {
+        testUser.save.then(() => {
             testUser.id.should.be.a("number");
             done();
         });
@@ -24,7 +24,7 @@ describe("Model User's", () => {
     it("save() on same User should return the same object ID", (done) => {
         testUser.handle = "bob";
         const currentId = testUser.id;
-        testUser.save()
+        testUser.save
             .then(() => testUser.fetchDbRow())
             .then(dbUser => {
                 dbUser.id.should.equal(currentId);
@@ -52,6 +52,12 @@ describe("Model User's", () => {
     it("games() should return an array of games", (done) => {
         testUser.games.then(result => {
             result.should.be.an("array");
+            done();
+        });
+    });
+
+    it("startNewGame() should create and join a new game", (done) => {
+        testUser.createNewGame(1).then(() => {
             done();
         });
     });

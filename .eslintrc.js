@@ -51,7 +51,7 @@ module.exports = {
         "object-curly-spacing": ["error", "always"],
         "yoda": "warn",
         "handle-callback-err": "error",
-        "camelcase": "warn",
+        "camelcase": 0,
         "max-nested-callbacks": ["warn", 3],
         "space-in-parens": ["warn", "never"],
         "no-console": "warn",

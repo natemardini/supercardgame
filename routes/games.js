@@ -19,7 +19,11 @@ module.exports = (passport) => {
      * PUT /api/games
      */
     router.put("/", (req, res) => {
+        const game = Game.create(req.body.type);
 
+        game.save.then(() => {
+            res.json(game);
+        });
     });
 
     /**

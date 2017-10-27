@@ -43,16 +43,29 @@ class Model {
      * @memberof Model
      */
     static findAll(query) {
-        return knex(this.tableName)
-            .select()
-            .where(query)
-            .then(rows => {
-                if (rows.length > 0) {
-                    return rows.map(row => Object.assign(new this(), row));
-                } else {
-                    return [];
-                }
-            });
+        if (typeof query === "object") {
+            return knex(this.tableName)
+                .select()
+                .where(query)
+                .then(rows => {
+                    if (rows.length > 0) {
+                        return rows.map(row => Object.assign(new this(), row));
+                    } else {
+                        return [];
+                    }
+                });
+        } else {
+            return knex(this.tableName)
+                .select()
+                .whereRaw(query)
+                .then(rows => {
+                    if (rows.length > 0) {
+                        return rows.map(row => Object.assign(new this(), row));
+                    } else {
+                        return [];
+                    }
+                });
+        }
     }
 
     static get tableName() {
@@ -66,15 +79,19 @@ class Model {
     /**
      * Insert new row in db or updates fields in existing row
      */
-    save() {
+    get save() {
         if (this.id) {
             return knex(this.constructor.tableName)
                 .where("id", this.id)
-                .update(this, "id");
+                .update(this, "id")
+                .then(() => Promise.resolve(this.id));
         } else {
             return knex(this.constructor.tableName)
                 .insert(this, "id")
-                .then(id => this.id = id[0]);
+                .then(id => {
+                    this.id = id[0];
+                    return Promise.resolve(this.id);
+                });
         }
     }
 
