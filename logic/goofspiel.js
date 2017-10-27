@@ -1,24 +1,26 @@
+const _ = require("lodash");
+
 /**
  * function: create an array of 13 elements
  */
-function createSuit () {
-    const suit = [];
-    for (let i = 1; i <= 13; i++) {
-        suit.push(i);
-    }
-    return suit;
-}
+// function createSuit () {
+//     const suit = [];
+//     for (let i = 1; i <= 13; i++) {
+//         suit.push(i);
+//     }
+//     return suit;
+// }
 
 /**
  * function: shuffle an array
  */
-function shuffle (input) {
-    for (let i = input.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [input[i], input[j]] = [input[j], input[i]];
-    }
-    return input;
-}
+// function shuffle (input) {
+//     for (let i = input.length - 1; i > 0; i--) {
+//         const j = Math.floor(Math.random() * (i + 1));
+//         [input[i], input[j]] = [input[j], input[i]];
+//     }
+//     return input;
+// }
 
 
 // let prizes = createSuit();  // from Game -> cards_in_play
@@ -55,28 +57,29 @@ function shuffle (input) {
     user1card: 10,
     user2card: 8 }
  */
-function startGame(input) {
-    const i = input.round;
-    let user1Score = input.user1score;
-    let user2Score = input.user2score;
+function startGame(game, query) {
+    const i = game.round;
+    let user1Score = game.score1;
+    let user2Score = game.score1;
     let user1Win = input.user1win;
     let user2Win = input.user2win;
-    const prize = input.prize;
+    const prize = query.prizeCard;
     const user1Card = input.user1card;
     const user2Card = input.user2card;
 
-    if (user1Win || user2Win) {
-        return 0; //game already finished!
+
+    if (game.status === 3) {
+        return false;
     }
-    else if (i === 13) {                 // last round of the game, compare final scores
-        if (user1Score > user2Score) {
-            user1Win = 1;   //game finished, user1 win
-        }
-        else if (user1Score < user2Score) {
-            user2Win = 1;   //game finished, user2 win
-        }
-        else {} //game finished, Tie!
+
+    if (game.round === 13) {
+        tallyEndRound(game);
     }
+
+
+
+
+
 
     // if a user's score is > 45.5, win the game
     else if (user1Score > user2Score && user1Score >= 45.5) {
@@ -109,9 +112,23 @@ function startGame(input) {
         user1win: user1Win,
         user2win: user2Win };
 }
-module.exports = {
-    startGame
-};
+
+function checkBids(game) {
+
+    game.connectedMatches.length;
+}
+
+function tallyScore(game) {
+        if (user1Score > user2Score) {
+            game.turn_sequence;   //game finished, user1 win
+        }
+        else if (user1Score < user2Score) {
+            user2Win = 1;   //game finished, user2 win
+        }
+    }
+}
+
+module.exports = startGame;
 
 
 

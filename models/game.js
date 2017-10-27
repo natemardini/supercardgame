@@ -50,7 +50,8 @@ class Game extends Model {
         const key = Object.keys(this.turn_sequence).length + 1;
         this.turn_sequence[key] = {
             match_id: matchId,
-            active: false
+            active: false,
+            winner: false
         };
     }
 
@@ -79,8 +80,21 @@ class Game extends Model {
             deck.prize    = deck.giveCards(13, "random");
             deck.phand1   = _.orderBy(deck.giveCards(13, "random"), ["suit", "valueN"]);
             deck.phand2   = _.orderBy(deck.giveCards(13, "random"), ["suit", "valueN"]);
+            deck.score1   = 0;
+            deck.score2 = 0;
             deck.discards = deck.giveCards();
             this.deck     = deck;
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    computeRound(query) {
+        switch (this.gameType) {
+        case 1:
+            require("./../logic/goofspiel")(this, query);
             break;
 
         default:

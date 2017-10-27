@@ -34,6 +34,7 @@ app.use(passport.session());
 // MISC
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use("/styles", sass({
     src: `${__dirname  }/styles`,
     dest: `${__dirname  }/public/styles`,

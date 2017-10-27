@@ -60,22 +60,25 @@ function addCardClick(i, suitName, rankName, x, y) {
 }
 
 /**
- * 
- * @param {any} bidCard 
- * @param {any} prizeCard 
+ *
+ * @param {any} bidCard
+ * @param {any} prizeCard
  */
 function bid(bidCard, suitName){
-    let bidCards = [{
-        "deck": prizeCard["deck"],
-        "suit": suitName,
-        "value": bidCard
-    }, prizeCard];
+    const bidCards = {
+        bidCard: {
+            "deck": prizeCard["deck"],
+            "suit": suitName,
+            "value": bidCard
+        },
+        prizeCard
+    };
 
-console.log(bidCards)
+    console.log(bidCards);
     $.ajax({
         type: "POST",
         url: "/api/games/240",
-        data: bidCards,//JSON.stringify(bidCards),
+        data: JSON.stringify(bidCards),//JSON.stringify(bidCards),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function(data){alert(data);},
