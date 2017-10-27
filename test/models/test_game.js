@@ -59,11 +59,11 @@ describe("Model Game's", () => {
         });
     });
 
-    it("destroy() should delete the object", (done) => {
-        testGame.destroy().then(result => {
-            result.should.equal(1);
-            done();
-        });
-    });
+    // it("destroy() should delete the object", (done) => {
+    //     testGame.destroy().then(result => {
+    //         result.should.equal(1);
+    //         done();
+    //     });
+    // });
 });
 

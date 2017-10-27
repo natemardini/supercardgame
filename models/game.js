@@ -77,8 +77,8 @@ class Game extends Model {
             });
 
             deck.prize    = deck.giveCards(13, "random");
-            deck.phand1   = deck.giveCards(13, "random");
-            deck.phand2   = deck.giveCards(13, "random");
+            deck.phand1   = _.orderBy(deck.giveCards(13, "random"), ["suit", "valueN"]);
+            deck.phand2   = _.orderBy(deck.giveCards(13, "random"), ["suit", "valueN"]);
             deck.discards = deck.giveCards();
             this.deck     = deck;
             break;
