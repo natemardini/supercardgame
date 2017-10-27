@@ -32,6 +32,7 @@ function initializeGame(){
         });
 
 
+
     });
 }
 
@@ -223,8 +224,15 @@ function createCard(i, suitName, rankName, x, y){
 
 
     // add drag/click listeners
-    //addListener($el, "mousedown", onMousedown);
-    //addListener($el, "touchstart", onMousedown);
+    // addListener($el, "mousedown", onMousedown);
+    // addListener($el, "touchstart", onMousedown);
+    //$el.addEventListener("click", function(){console.log("test")}, false);
+    $el.addEventListener("click", function(){
+                                                let divName = "div.card." + suitName +".rank" + rankName;
+                                                console.log(divName + " " + x + " " + y);
+                                                console.log(this);
+                                                $(this).css("transform", "translate(" + 250 + "px, " + 0 + "px)");
+                                            }, false);
 
     // load modules
     // for (module in modules) {

@@ -1,4 +1,5 @@
 const Model = require("../db/model");
+const Game = require("./game");
 const Match = require("./match");
 const bcrypt = require("bcryptjs");
 
@@ -29,14 +30,37 @@ class User extends Model {
             .select();
     }
 
-    set game(game) {
-        const match = new Match();
-        match.user  = this;
-        match.game  = game;
-        match.score = 0;
+    createNewGame(gameType) {
+        const game = Game.create(gameType);
+        const self = this;
 
-        match.save().then(() => {
-            return true;
+        return game.save.then((gameId) => {
+            const userMatch = new Match();
+            userMatch.user = self.id;
+            userMatch.game = gameId;
+            return userMatch.save;
+
+        }).then((matchId) => {
+            game.addToTurnSequence = matchId;
+            return game.save;
+
+        }).catch(e => console.log(e));
+    }
+
+    findAllPendingGames(gameType) {
+        return Game.findAll({ game_type: gameType, status: 1 });
+    }
+
+    joinGame(game) {
+        const userMatch = new Match({
+            user: this.id,
+            game: game
+        });
+
+        return userMatch.save.then(() => {
+            game.status = 2;
+            game.turnSequence = userMatch.id;
+            return game.save;
         }).catch(e => console.log(e));
     }
 }

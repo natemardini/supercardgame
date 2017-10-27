@@ -8,7 +8,7 @@ describe("Model Game's", () => {
     const testGame = Game.create(1);
 
     it("save() should return the object ID", (done) => {
-        testGame.save().then(() => {
+        testGame.save.then(() => {
             testGame.id.should.be.a("number");
             done();
         });
@@ -25,7 +25,7 @@ describe("Model Game's", () => {
     it("save() on same Game should return the same object ID", (done) => {
         testGame.gameType = 2;
         const currentId = testGame.id;
-        testGame.save()
+        testGame.save
             .then(() => Game.findOne(currentId))
             .then(dbGame => {
                 dbGame.id.should.equal(currentId);

@@ -9,11 +9,11 @@ class Deck {
         return ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
     }
 
-    static score(card) {
-        if (!isNaN(Number(card.value))) {
-            return Number(card.value);
+    static score(value) {
+        if (!isNaN(Number(value))) {
+            return Number(value);
         } else {
-            switch (card.value) {
+            switch (value) {
             case "A":
                 return 1;
             case "J":
@@ -87,6 +87,7 @@ class Deck {
         return {
             suit,
             value,
+            valueN: Deck.score(value),
             deck: this.id
         };
     }
