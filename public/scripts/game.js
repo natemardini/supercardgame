@@ -230,6 +230,19 @@ function createCard(i, suitName, rankName, x, y){
     self.z = z;
     self.rot = 0;
 
+    // set default side to back
+    //self.setSide("front");
+
+    $el.appendChild($face);
+
+    // // set rank & suit
+    // self.setRankSuit = function (rank, suit) {
+    //     //let suitName = SuitName(suit);
+    //     $el.setAttribute("class", "card " + suitName + " rank" + rank);
+    // };
+
+    // self.setRankSuit(rank, suit);
+
     // add drag/click listeners
     // addListener($el, "mousedown", onMousedown);
     // addListener($el, "touchstart", onMousedown);
@@ -256,6 +269,25 @@ function createCard(i, suitName, rankName, x, y){
         self.$root && self.$root.removeChild($el);
         self.$root = null;
     }
+
+    // function setSide(newSide) {
+    //     // flip sides
+    //     if (newSide === "front") {
+    //         if (self.side === "back") {
+    //             $el.removeChild($back);
+    //         }
+    //         self.side = "front";
+    //         $el.appendChild($face);
+    //         self.setRankSuit(self.rank, self.suit);
+    //     } else {
+    //         if (self.side === "front") {
+    //             $el.removeChild($face);
+    //         }
+    //         self.side = "back";
+    //         $el.appendChild($back);
+    //         $el.setAttribute("class", "card");
+    //     }
+    // }
 
 }
 
