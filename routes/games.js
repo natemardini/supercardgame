@@ -39,8 +39,9 @@ module.exports = (passport) => {
      * POST /api/games/[id]
      */
     router.post("/:id", (req, res) => {
-        const { bidCard, prizeCard } = req.query;
-        console.log(JSON.stringify(bidCard));
+        console.log(req.body);
+        //const [ bidCard, prizeCard ] = req.body;
+        //console.log(JSON.stringify(bidCard));
     });
 
     /**
