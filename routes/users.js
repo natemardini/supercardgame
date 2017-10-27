@@ -48,12 +48,13 @@ module.exports = (passport) => {
     /**
      * DELETE /api/users/[id]
      */
-    router.delete("/:id",
+    router.delete("/",
         passport.authenticate("local"),
         (req, res) => {
-            User.findAll({}).then(users => {
-                res.json(users);
-            });
+            User.findOne({ handle: "bob" })
+                .then(user => user.matches)
+                .then(games => res.json(games))
+                .catch(e => res.json(e));
         }
     );
 

@@ -42,6 +42,20 @@ describe("Model User's", () => {
         });
     });
 
+    it("matches() should return an array of matches", (done) => {
+        testUser.matches.then(result => {
+            result.should.be.an("array");
+            done();
+        });
+    });
+
+    it("games() should return an array of games", (done) => {
+        testUser.games.then(result => {
+            result.should.be.an("array");
+            done();
+        });
+    });
+
     it("destroy() should delete the object", (done) => {
         testUser.destroy().then(result => {
             result.should.equal(1);

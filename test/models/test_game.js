@@ -1,20 +1,11 @@
 
 const should = require("chai").should();
 const Game = require("../../models/game");
+const { Deck } = require("../../models/card");
 
 describe("Model Game's", () => {
 
-    const testGame = Game.create(1, {
-        player1: [
-            1, 5, 7, 52
-        ],
-        player2: [
-            6, 3, 2, 51
-        ],
-        prize: [
-            10, 11, 12, 45
-        ]
-    });
+    const testGame = Game.create(1);
 
     it("save() should return the object ID", (done) => {
         testGame.save().then(() => {
@@ -40,9 +31,9 @@ describe("Model Game's", () => {
                 dbGame.id.should.equal(currentId);
                 dbGame.should.be.an.instanceOf(Game);
                 dbGame.gameType.should.equal(2);
-                dbGame.deck.should.be.an("object");
-                dbGame.deck.prize.should.be.an("array");
-                dbGame.deck.prize[1].should.be.equal(11);
+                dbGame.cards.should.be.an.instanceOf(Deck);
+                dbGame.cards.prize.should.be.an("array");
+                dbGame.cards.prize[1].should.be.an("object");
                 done();
             });
     });
@@ -51,6 +42,19 @@ describe("Model Game's", () => {
         Game.findAll({}).then(result => {
             result.should.be.an("array");
             result[0].should.be.an.instanceOf(Game);
+            done();
+        });
+    });
+
+    it("total of all cards in standard deck should be 52", (done) => {
+        Game.findOne(testGame.id).then(game => {
+            const totalCards = game.cards.cards.length +
+                game.cards.prize.length +
+                game.cards.phand1.length +
+                game.cards.phand2.length +
+                game.cards.discards.length;
+
+            totalCards.should.equal(52);
             done();
         });
     });
