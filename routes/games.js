@@ -26,7 +26,10 @@ module.exports = (passport) => {
      * GET /api/games/[id]
      */
     router.get("/:id", (req, res) => {
-
+        Game.findOne(req.params.id).then(game => {
+            console.log(game);
+            res.json(game);
+        });
     });
 
     /**

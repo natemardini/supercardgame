@@ -13,7 +13,11 @@ class Model {
      * @memberof Model
      */
     static findOne(query) {
-        if (typeof query !== "number" && typeof query !== "object") {
+        if (typeof query === "string") {
+            query = Number(query);
+        }
+
+        if (isNaN(query) || (typeof query !== "number" && typeof query !== "object")) {
             throw Error("Incorrect input. Only objects or numbers.");
         } else if (typeof query === "number") {
             query = { id: query };
