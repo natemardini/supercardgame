@@ -103,12 +103,15 @@ function startGame(input) {
         }
         else {}
     }
+
     return { user1score: user1Score,
         user2score: user2Score,
         user1win: user1Win,
         user2win: user2Win };
 }
-module.exports = { startGame: startGame };
+module.exports = {
+    startGame
+};
 
 
 
