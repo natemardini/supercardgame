@@ -1,17 +1,17 @@
 
 /**
- * 
- * 
+ *
+ *
  */
 function initializeGame(){
     // $(document).ready(function() {
-        
-        
+
+
     //         $("body").on("click", "div.card.diamonds.rank1", (event) => {
     //             // console.log(event.curr)
     //             $(this).find('div.card.diamonds.rank1').css("transform", "translate(0px, 230px)")
     //         });
-        
+
     //     });
 
     // Get json object for game 201 (hard-coded for now).
@@ -25,29 +25,29 @@ function initializeGame(){
 }
 
 /**
- * 
- * @param {any} type 
- * @returns 
+ *
+ * @param {any} type
+ * @returns
  */
 function createElement(type) {
     return document.createElement(type);
 }
 
 /**
- * 
- * 
- * @param {any} target 
- * @param {any} name 
- * @param {any} listener 
+ *
+ *
+ * @param {any} target
+ * @param {any} name
+ * @param {any} listener
  */
 function addListener(target, name, listener) {
     target.addEventListener(name, listener);
 }
 
 /**
- * 
- * 
- * @returns 
+ *
+ *
+ * @returns
  */
 function check3d() {
     // I admit, this line is stealed from the great Velocity.js!
@@ -73,11 +73,11 @@ function check3d() {
 }
 
 /**
- * 
- * @param {any} a 
- * @param {any} b 
- * @param {any} c 
- * @returns 
+ *
+ * @param {any} a
+ * @param {any} b
+ * @param {any} c
+ * @returns
  */
 function translate(a, b, c) {
     typeof has3d !== "undefined" || (has3d = check3d());
@@ -95,10 +95,10 @@ let style = document.createElement("p").style;
 let memoized = {};
 
 /**
- * 
- * 
- * @param {any} param 
- * @returns 
+ *
+ *
+ * @param {any} param
+ * @returns
  */
 function prefix(param) {
     if (typeof memoized[param] !== "undefined") {
@@ -124,24 +124,24 @@ function prefix(param) {
 }
 
 /**
- * 
- * 
- * @param {any} rankName 
- * @param {any} suitName 
+ *
+ *
+ * @param {any} rankName
+ * @param {any} suitName
  */
 function moveCard(x, suitName, rankName) {
     let divName = "div.card." + suitName +".rank" + rankName;
 
     $("body").on("click", divName, (event) => {
-        $(this).find(divName).css("transform", "translate(0px, 230px)")
+        $(event.currentTarget).css("transform", "translate(0px, 230px)")
     });
 
 }
 
 /**
- * 
- * 
- * @param {any} i 
+ *
+ *
+ * @param {any} i
  */
 function displayCard(i, rankName, suitName){
     let transform = prefix("transform");
@@ -155,12 +155,12 @@ function displayCard(i, rankName, suitName){
     let $el = createElement("div");
     let $face = createElement("div");
     let $back = createElement("div");
-    
+
     // Set the suit/rank.
     $el.setAttribute("class", "card " + rankName + " rank" + suitName);
 
     var $container = document.getElementById('container');
-       
+
     $container.appendChild($el);
 
     // self = card
@@ -209,6 +209,6 @@ function displayCard(i, rankName, suitName){
         self.$root && self.$root.removeChild($el);
         self.$root = null;
     }
-    
+
 }
 
