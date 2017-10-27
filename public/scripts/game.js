@@ -1,11 +1,14 @@
 let zIndex = 100;
+let prizeCard = {};
+//bid card and prize card
+//   send to router/
 /**
  *
  *
  */
 function initializeGame(){
     // Get json object for game 201 (hard-coded for now).
-    $.getJSON( "http://localhost:8080/api/games/201", function(data) {
+    $.getJSON( "http://localhost:8080/api/games/240", function(data) {
 
         // Initial position for Player1 hand.
         let x = -500;
@@ -16,35 +19,26 @@ function initializeGame(){
             createCard(0, value["suit"], value["valueN"], x, y);
             // If there's more cards, the next one should be shifted +90.
             x +=90;
-            //moveCard(0, value["suit"], value["valueN"], -500, 400);
-            moveCard(0, value["suit"], value["valueN"], -50, 230);
+            addCardClick(0, value["suit"], value["valueN"], -50, 230);
         });
 
         // create prize cards
         $.each(data["deck"]["prize"], function(key, value) {
             createCard(0, value["suit"], value["valueN"], 40, 80);
-            moveCard(0, value["suit"], value["valueN"], 40, 230);
+            addCardClick(0, value["suit"], value["valueN"], 40, 230);
+            prizeCard = {"deck": data["deck"]["id"] ,
+                        "suit": value["suit"],
+                        "value": value["valueN"]
+        }
         });
 
+        // Create player2 hand.
         $.each(data["deck"]["phand2"], function(key, value) {
             createCard(0, value["suit"], value["valueN"], 200, 80);
-            moveCard(0, value["suit"], value["valueN"], 130, 230);
+            addCardClick(0, value["suit"], value["valueN"], 130, 230);
         });
-
-
-
     });
 }
-
-
-// function moveCard(i, suitName, rankName, x, y) {
-//     let divName = "div.card." + suitName +".rank" + rankName;
-
-//     $("body").on("click", divName, (event) => {
-//         $(this).find(divName).css("transform", `translate(0px, 230px)`);
-//     });
-// }
-// let zIndex = 0 // set up the z-index
 
 /**
  * movecard
@@ -55,12 +49,40 @@ function initializeGame(){
  * @param {*} y
  * @param {*} z
  */
-function moveCard(x, suitName, rankName, x, y) {
+function addCardClick(i, suitName, rankName, x, y) {
     let divName = "div.card." + suitName +".rank" + rankName;
     $("body").on("click", divName, (event) => {
         zIndex += 2;
         $(event.currentTarget).css("transform", `translate(${x}px, ${y}px)`).css("z-index", zIndex);
+        bid(rankName, suitName)
     });
+
+}
+
+/**
+ * 
+ * @param {any} bidCard 
+ * @param {any} prizeCard 
+ */
+function bid(bidCard, suitName){
+    let bidCards = [{
+        "deck": prizeCard["deck"],
+        "suit": suitName,
+        "value": bidCard
+    }, prizeCard];
+
+console.log(bidCards)
+    $.ajax({
+        type: "POST",
+        url: "/api/games/240",
+        data: bidCards,//JSON.stringify(bidCards),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data){alert(data);},
+        failure: function(errMsg) {
+            alert(errMsg);
+        }
+  });
 
 }
 
@@ -166,20 +188,6 @@ function prefix(param) {
 /**
  *
  *
- * @param {any} rankName
- * @param {any} suitName
- */
-// function moveCard(i, suitName, rankName, x, y) {
-//     let divName = "div.card." + suitName +".rank" + rankName;
-
-//     //$("body").on("click", divName, (event) => {
-//         $(this).find(divName).css("transform", `translate(${x}px, ${y}px)`);
-//     //});
-// }
-
-/**
- *
- *
  * @param {any} i
  */
 function createCard(i, suitName, rankName, x, y){
@@ -222,17 +230,9 @@ function createCard(i, suitName, rankName, x, y){
     self.z = z;
     self.rot = 0;
 
-
     // add drag/click listeners
     // addListener($el, "mousedown", onMousedown);
     // addListener($el, "touchstart", onMousedown);
-    //$el.addEventListener("click", function(){console.log("test")}, false);
-    $el.addEventListener("click", function(){
-                                                let divName = "div.card." + suitName +".rank" + rankName;
-                                                console.log(divName + " " + x + " " + y);
-                                                console.log(this);
-                                                $(this).css("transform", "translate(" + 250 + "px, " + 0 + "px)");
-                                            }, false);
 
     // load modules
     // for (module in modules) {
