@@ -39,8 +39,11 @@ module.exports = (passport) => {
      * POST /api/games/[id]
      */
     router.post("/:id", (req, res) => {
-        const { bidCard, prizeCard } = req.body;
-        res.sendStatus(200);
+        const userID = "59f3c6e0ff0285431851b6f5"; // hard coded for testing
+        Game.findById(req.params.id).then(game => {
+            game.computeRound(userID, req.body);
+            res.json(game);
+        }).catch(e => res.status(500).json(e));
     });
 
     /**
