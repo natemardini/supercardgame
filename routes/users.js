@@ -31,9 +31,34 @@ module.exports = (passport) => {
     });
 
     /**
+    * PUT /api/users
+    * Register a new user
+    */
+    router.get("/login", (req, res) => {
+        res.render("users/login");
+    });
+
+    /**
+    * PUT /api/users
+    * Register a new user
+    */
+    router.put("/login", passport.authenticate("local"), (req, res) => {
+        res.redirect("/users/lobby");
+    });
+
+    /**
+    * DELETE /users/logout
+    * Register a new user
+    */
+    router.get("/logout", function (req, res) {
+        req.logout();
+        res.redirect("/");
+    });
+
+    /**
     * GET /api/users/[id]
     */
-    router.get("/lobby", passport.auth, (req, res) => {
+    router.get("/lobby", passport.restricted, (req, res) => {
         res.send("Works");
     });
 
@@ -46,13 +71,11 @@ module.exports = (passport) => {
     /**
      * PATCH /api/users/[id]
      */
-    router.patch("/:id",
-        passport.authenticate("local"),
-        (req, res) => {
-            User.findAll({}).then(users => {
-                res.json(users);
-            });
-        }
+    router.patch("/:id", (req, res) => {
+        User.findAll({}).then(users => {
+            res.json(users);
+        });
+    }
     );
 
     /**
