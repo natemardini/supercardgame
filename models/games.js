@@ -17,7 +17,7 @@ const playerSchema = new Schema({
     active:   Boolean,
     win:      Boolean,
     score:    Number,
-    hand:     [cardSchema]
+    hand:     [ cardSchema ]
 });
 
 const gameSchema = new Schema({
@@ -35,10 +35,52 @@ gameSchema.pre("save", function (next) {
     if (this.isNew) {
         this.round = 1;
         this.status = 1;
-        this.setup();
     }
     next();
 });
+
+gameSchema.methods.addPlayer = function (player, cb) {
+    const that = this;
+
+    const _player = new Player({
+        userId: player._id,
+        playerNo: this.players.length + 1,
+        active: false,
+        win: false,
+        score: 0,
+        hand: []
+    });
+
+    this.players.push(_player);
+
+    this.save((err) => {
+        if (err) throw err;
+        player.activeGames.push(that.id);
+        player.save((err) => {
+            if (err) {
+                cb(err);
+            } else {
+                cb(null, that);
+            }
+        });
+    });
+};
+
+gameSchema.methods.advanceRound = function () {
+    let index = _.findIndex(this.players, "active");
+    index === -1 ? index = _.random(0, this.players.length) : index;
+    this.players[index].active = false;
+
+    let nextPlayer;
+    if (index + 1 <= this.players.length - 1) {
+        nextPlayer = index + 1;
+    } else {
+        nextPlayer = 0;
+    }
+
+    this.players[nextPlayer].active = true;
+    this.round++;
+};
 
 gameSchema.methods.setup = function () {
     switch (this.gameType) {
@@ -63,4 +105,16 @@ gameSchema.methods.setup = function () {
     }
 };
 
+gameSchema.methods.computeRound = function (query) {
+    switch (this.gameType) {
+    case 1:
+        require("./../logic/goofspiel")(this, query);
+        break;
+
+    default:
+        break;
+    }
+};
+
+const Player = mongoose.model("Player", playerSchema);
 module.exports = mongoose.model("Game", gameSchema);
