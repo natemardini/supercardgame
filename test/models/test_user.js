@@ -4,8 +4,6 @@ const should = require("chai").should();
 const User = require("../../models/users");
 const mongoose = require("mongoose");
 
-
-
 describe("Model User's", () => {
 
     beforeEach((done) => {

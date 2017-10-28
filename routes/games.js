@@ -1,7 +1,7 @@
 "use strict";
 
 const router = require("express").Router();
-const Game = require("../models/game");
+const Game = require("../models/games");
 
 module.exports = (passport) => {
     /**
@@ -30,7 +30,7 @@ module.exports = (passport) => {
      * GET /api/games/[id]
      */
     router.get("/:id", (req, res) => {
-        Game.findOne(req.params.id).then(game => {
+        Game.findById(req.params.id).then(game => {
             res.json(game);
         });
     });

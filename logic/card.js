@@ -130,13 +130,9 @@ class Deck {
     }
 
     static returnCard(transfer) {
-        if (transfer.card.deck === transfer.to.id) {
-            _.pull(transfer.from, transfer.card);
-            transfer.to[transfer.pile].push(transfer.card);
-            return true;
-        } else {
-            return false;
-        }
+        _.pull(transfer.from, transfer.card);
+        transfer.to[transfer.pile].push(transfer.card);
+        return true;
     }
 
     static _validate(suit, value) {

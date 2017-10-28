@@ -84,22 +84,23 @@ gameSchema.methods.advanceRound = function () {
 
 gameSchema.methods.setup = function () {
     switch (this.gameType) {
-    case 1:
+    case 1: {
         const deck = Deck.create();
 
         this.deck = {};
         this.deck.prize = deck.giveCards(13, "random");
 
         this.players.forEach((player, index) => {
-            player.hand     = _.orderBy(deck.giveCards(13, "random"),
+            player.hand = _.orderBy(deck.giveCards(13, "random"),
                 ["suit", "valueN"]);
-            player.score    = 0;
-            player.win      = false;
+            player.score = 0;
+            player.win = false;
             player.playerNo = index + 1;
-            player.bid      = [];
+            player.bid = [];
         });
         this.deck.discards = deck.giveCards();
         break;
+    }
     default:
         break;
     }

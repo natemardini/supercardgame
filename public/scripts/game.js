@@ -8,14 +8,14 @@ let prizeCard = {};
  */
 function initializeGame(){
     // Get json object for game 201 (hard-coded for now).
-    $.getJSON( "http://localhost:8080/api/games/240", function(data) {
+    $.getJSON("http://localhost:8080/api/games/59f405bb51b71a62d27493ae", function(data) {
 
         // Initial position for Player1 hand.
         let x = -500;
-        let y = 400;
+        const y = 400;
 
         // Create player1 hand and deal cards.
-        $.each(data["deck"]["phand1"], function(key, value) {
+        $.each(data["players"][0]["hand"], function(key, value) {
             createCard(0, value["suit"], value["valueN"], x, y);
             // If there's more cards, the next one should be shifted +90.
             x +=90;
@@ -26,14 +26,14 @@ function initializeGame(){
         $.each(data["deck"]["prize"], function(key, value) {
             createCard(0, value["suit"], value["valueN"], 40, 80);
             addCardClick(0, value["suit"], value["valueN"], 40, 230);
-            prizeCard = {"deck": data["deck"]["id"] ,
+            prizeCard = { "deck": data["deck"]["id"] ,
                 "suit": value["suit"],
                 "value": value["valueN"]
-            }
+            };
         });
 
         // Create player2 hand.
-        $.each(data["deck"]["phand2"], function(key, value) {
+        $.each(data["players"][1]["hand"], function(key, value) {
             createCard(0, value["suit"], value["valueN"], 200, 80);
             addCardClick(0, value["suit"], value["valueN"], 130, 230);
         });
@@ -50,13 +50,13 @@ function initializeGame(){
  * @param {*} z
  */
 function addCardClick(i, suitName, rankName, x, y) {
-    let divName = "div.card." + suitName +".rank" + rankName;
+    const divName = `div.card.${  suitName }.rank${  rankName}`;
     $("body").on("click", divName, (event) => {
-        let bidCardPosition = $(event.currentTarget).css("transform");
+        const bidCardPosition = $(event.currentTarget).css("transform");
         zIndex += 2;
         $(event.currentTarget).css("transform", `translate(${x}px, ${y}px)`).css("z-index", zIndex);
         bid(rankName, suitName);
-        console.log(bidCardPosition)
+        console.log(bidCardPosition);
         moveCard(divName, bidCardPosition);
     });
 
@@ -80,7 +80,7 @@ function bid(bidCard, suitName){
     console.log(bidCards);
     $.ajax({
         type: "POST",
-        url: "/api/games/240",
+        url: "/api/games/59f405bb51b71a62d27493ae",
         data: JSON.stringify(bidCards),//JSON.stringify(bidCards),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -94,15 +94,15 @@ function bid(bidCard, suitName){
 
 /**
  *  This function is used to shift the players hand cards as bids are made.
- * @param {any} oldCard 
- * @param {any} nextCard 
+ * @param {any} oldCard
+ * @param {any} nextCard
  */
 function moveCard(oldCard, bidPosition){
-    let leftCard = $(oldCard).prev();
-    let rightCard = $(oldCard).next();
-    let leftCardClass = leftCard.attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
-    let rightCardClass = rightCard.attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
-    let bidCardPosition = rightCard.css("transform");
+    const leftCard = $(oldCard).prev();
+    const rightCard = $(oldCard).next();
+    const leftCardClass = leftCard.attr("class").replace("card ", "").replace(" rank", "").substr(0, 4);
+    const rightCardClass = rightCard.attr("class").replace("card ", "").replace(" rank", "").substr(0, 4);
+    const bidCardPosition = rightCard.css("transform");
 
     if (leftCardClass === rightCardClass){
         $(rightCard).css("transform", bidPosition);
@@ -138,14 +138,14 @@ function addListener(target, name, listener) {
 function check3d() {
     // I admit, this line is stealed from the great Velocity.js!
     // http://julian.com/research/velocity/
-    let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     if (!isMobile) {
         return false;
     }
 
-    let transform = prefix("transform");
-    let $p = document.createElement("p");
+    const transform = prefix("transform");
+    const $p = document.createElement("p");
 
     document.body.appendChild($p);
     $p.style[transform] = "translate3d(1px,1px,1px)";
@@ -171,14 +171,14 @@ function translate(a, b, c) {
     c = c || 0;
 
     if (has3d) {
-        return "translate3d(" + a + ", " + b + ", " + c + ")";
+        return `translate3d(${  a  }, ${  b  }, ${  c  })`;
     } else {
-        return "translate(" + a + ", " + b + ")";
+        return `translate(${  a  }, ${  b  })`;
     }
 }
 
-let style = document.createElement("p").style;
-let memoized = {};
+const style = document.createElement("p").style;
+const memoized = {};
 
 /**
  *
@@ -196,8 +196,8 @@ function prefix(param) {
         return param;
     }
 
-    let camelCase = param[0].toUpperCase() + param.slice(1);
-    let prefixes = ["webkit", "moz", "Moz", "ms", "o"];
+    const camelCase = param[0].toUpperCase() + param.slice(1);
+    const prefixes = ["webkit", "moz", "Moz", "ms", "o"];
     let test;
 
     for (let i = 0, len = prefixes.length; i < len; i++) {
@@ -215,27 +215,27 @@ function prefix(param) {
  * @param {any} i
  */
 function createCard(i, suitName, rankName, x, y){
-    let transform = prefix("transform");
+    const transform = prefix("transform");
 
     // calculate rank/suit, etc..
-    let rank = i % 13 + 1;
-    let suit = i / 13 | 0;
-    let z = (52 - i) / 4;
+    const rank = i % 13 + 1;
+    const suit = i / 13 | 0;
+    const z = (52 - i) / 4;
 
     // create elements
-    let $el = createElement("div");
-    let $face = createElement("div");
-    let $back = createElement("div");
+    const $el = createElement("div");
+    const $face = createElement("div");
+    const $back = createElement("div");
 
     // Set the suit/rank.
-    $el.setAttribute("class", "card " + suitName + " rank" + rankName);
+    $el.setAttribute("class", `card ${  suitName  } rank${  rankName}`);
 
-    let $container = document.getElementById('container');
+    const $container = document.getElementById("container");
 
     $container.appendChild($el);
 
     // self = card
-    let self = { i: i, rank: rank, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
+    const self = { i: i, rank: rank, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
 
     //let modules = Deck.modules;
     //let module;
@@ -246,7 +246,7 @@ function createCard(i, suitName, rankName, x, y){
 
     // add default transform
     //$el.style[transform] = translate(-z + "px", -z + "px");
-    $el.style[transform] = translate(x + "px", y + "px");
+    $el.style[transform] = translate(`${x  }px`, `${y  }px`);
 
     // add default values
     self.x = -z;

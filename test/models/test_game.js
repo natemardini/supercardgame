@@ -4,8 +4,6 @@ const should = require("chai").should();
 const Game = require("../../models/games");
 const User = require("../../models/users");
 const mongoose = require("mongoose");
-const { Deck } = require("../../logic/card");
-const _ = require("lodash");
 
 
 
