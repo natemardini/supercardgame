@@ -1,15 +1,21 @@
 $(document).ready(function () {
     findPendingGames();
+    $("button#create-new-game").click(createGame);
 });
 
 function findPendingGames() {
     $.getJSON("/api/games/pending", function (games) {
-        updateGameList(games);
+        $("table#pending-game-list > tbody").html(parseGames(games));
     });
 }
 
-function updateGameList(data) {
+
+function parseGames(data) {
     let table = "";
+
+    if (!Array.isArray(data)) {
+        data = [data];
+    }
 
     data.forEach((game) => {
         const str = `<tr>
@@ -22,7 +28,22 @@ function updateGameList(data) {
         table += str;
     });
 
-    const node = $.parseHTML(table);
+    return $.parseHTML(table);
+}
 
-    $("table#pending-game-list").html(node);
+function createGame(e) {
+    e.stopPropagation();
+
+    $.ajax({
+        url: "/api/games/",
+        method: "PUT",
+        data: {
+            type: 2
+        },
+        success: addNewGameToList
+    });
+}
+
+function addNewGameToList(newGame) {
+    $("table#pending-game-list > tbody").prepend(parseGames(newGame));
 }

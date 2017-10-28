@@ -2,6 +2,7 @@
 
 const router = require("express").Router();
 const Game = require("../models/games");
+const User = require("../models/users");
 
 module.exports = (passport) => {
     /**
@@ -27,11 +28,14 @@ module.exports = (passport) => {
     /**
      * PUT /api/games
      */
-    router.put("/", (req, res) => {
-        const game = Game.create(req.body.type);
+    router.put("/", passport.restricted, (req, res) => {
+        const game = new Game();
 
-        game.save.then(() => {
-            res.json(game);
+        User.findById(req.session.passport.user).then(user => {
+            game.addPlayer(user, (err, game) => {
+                if (err) throw err;
+                res.json(game);
+            });
         });
     });
 

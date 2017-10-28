@@ -64,7 +64,7 @@ gameSchema.methods.addPlayer = function (player, cb) {
 
     this.save((err) => {
         if (err) throw err;
-        player.activeGames.push(that.id);
+        player.activeGames.push(that._id);
         player.save((err) => {
             if (err) {
                 cb(err);
