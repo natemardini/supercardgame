@@ -59,7 +59,7 @@ module.exports = (passport) => {
     * GET /api/users/[id]
     */
     router.get("/lobby", passport.restricted, (req, res) => {
-        res.send("Works");
+        res.render("users/lobby");
     });
 
     /**

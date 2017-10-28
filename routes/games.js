@@ -16,6 +16,15 @@ module.exports = (passport) => {
     );
 
     /**
+    * GET /api/games
+    */
+    router.get("/pending", passport.restricted, (req, res) => {
+        Game.find({ status: 1 }).populate("userID", "handle").then(games => {
+            res.json(games);
+        }).catch(e => res.json(e));
+    });
+
+    /**
      * PUT /api/games
      */
     router.put("/", (req, res) => {
