@@ -1,9 +1,8 @@
 let zIndex = 100;
 let prizeCard = {};
-//bid card and prize card
-//   send to router/
+
 /**
- *
+ * This function pulls in the game data then 'deals' the cards.
  *
  */
 function initializeGame(){
@@ -54,9 +53,8 @@ function addCardClick(i, suitName, rankName, x, y) {
     $("body").on("click", divName, (event) => {
         let bidCardPosition = $(event.currentTarget).css("transform");
         zIndex += 2;
-        $(event.currentTarget).css("transform", `translate(${x}px, ${y}px)`).css("z-index", zIndex);
+        $(event.currentTarget).css("transform", `translate(${x}px, ${y}px)`).css("z-index", zIndex).addClass("played");
         bid(rankName, suitName);
-        console.log(bidCardPosition)
         moveCard(divName, bidCardPosition);
     });
 
@@ -94,17 +92,27 @@ function bid(bidCard, suitName){
 
 /**
  *  This function is used to shift the players hand cards as bids are made.
- * @param {any} oldCard 
- * @param {any} nextCard 
+ * @param {string} oldCard 
+ * @param {string} bidPosition 
  */
 function moveCard(oldCard, bidPosition){
-    let leftCard = $(oldCard).prev();
+    // Get the card right of the bid card.
     let rightCard = $(oldCard).next();
-    let leftCardClass = leftCard.attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
-    let rightCardClass = rightCard.attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
-    let bidCardPosition = rightCard.css("transform");
 
-    if (leftCardClass === rightCardClass){
+    // This loop ensures the card we want to shift hasn't already been used as a bid (i.e. played).
+    while (rightCard.hasClass("played")){
+        rightCard = $(rightCard).next();
+    }
+
+    // Get the suit from the class and only move cards from the same hand/pile.
+    const oldCardClass = $(oldCard).attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
+    const rightCardClass = rightCard.attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
+    
+    // Get the bid card position so we can shift all the cards to that position
+    const bidCardPosition = rightCard.css("transform");
+
+    // Add logic to check the next card against played cards.
+    if (oldCardClass === rightCardClass){
         $(rightCard).css("transform", bidPosition);
         moveCard(rightCard, bidCardPosition);
     }
