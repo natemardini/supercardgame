@@ -1,4 +1,7 @@
 const _ = require("lodash");
+const { Deck } = require("./../logic/card");
+
+
 
 /**
  * function: create an array of 13 elements
@@ -57,78 +60,128 @@ const _ = require("lodash");
     user1card: 10,
     user2card: 8 }
  */
-function startGame(game, query) {
-    const i = game.round;
-    let user1Score = game.score1;
-    let user2Score = game.score1;
-    let user1Win = input.user1win;
-    let user2Win = input.user2win;
-    const prize = query.prizeCard;
-    const user1Card = input.user1card;
-    const user2Card = input.user2card;
-
+function calculate(game, user, input) {
 
     if (game.status === 3) {
-        return false;
+        return game;
     }
+
+    placeBid(user, game, input.bidCard);
+    checkBids(game, input.prizeCard);
 
     if (game.round === 13) {
-        tallyEndRound(game);
+        checkScores(game, true);
+    } else {
+        checkScores(game);
     }
 
-
-
-
-
-
-    // if a user's score is > 45.5, win the game
-    else if (user1Score > user2Score && user1Score >= 45.5) {
-        user1Win = 1;       //game finished,  user1 win
-    }
-    else if (user2Score > user1Score && user2Score >= 45.5) {
-        user2Win = 1;      //game finished, user2 win
-    }
-
-    else {
-        if (user1Card > user2Card) {
-            user1Score += prize;
-        }
-        else if (user1Card < user2Card) {
-            user2Score += prize;
-        }
-        else {}  // console.log(`TIE this round!`);
-
-        if (user1Score > user2Score && user1Score >= 45.5) {
-            user1Win = 1;
-        }
-        else if (user2Score > user1Score && user2Score >= 45.5) {
-            user2Win = 1;
-        }
-        else {}
-    }
-
-    return { user1score: user1Score,
-        user2score: user2Score,
-        user1win: user1Win,
-        user2win: user2Win };
+    return game;
 }
 
-function checkBids(game) {
 
-    game.connectedMatches.length;
-}
+//     // if a user's score is > 45.5, win the game
+//     else if (player1.score > player2.score && player1.score >= 45.5) {
+//         player1.win = true;       //game finished,  user1 win
+//     }
+//     else if (player2.score > player1.score && player2.score >= 45.5) {
+//         player2.win = true;      //game finished, user2 win
+//     }
 
-function tallyScore(game) {
-        if (user1Score > user2Score) {
-            game.turn_sequence;   //game finished, user1 win
-        }
-        else if (user1Score < user2Score) {
-            user2Win = 1;   //game finished, user2 win
+//     else {
+//         if (user1Card > user2Card) {
+//             user1Score += prize;
+//         }
+//         else if (user1Card < user2Card) {
+//             user2Score += prize;
+//         }
+//         else {}  // console.log(`TIE this round!`);
+
+//         if (user1Score > user2Score && user1Score >= 45.5) {
+//             user1Win = 1;
+//         }
+//         else if (user2Score > user1Score && user2Score >= 45.5) {
+//             user2Win = 1;
+//         }
+//         else {}
+//     }
+
+//     return { user1score: user1Score,
+//         user2score: user2Score,
+//         user1win: user1Win,
+//         user2win: user2Win };
+// }
+
+function checkBids(game, prize) {
+
+    const currentBids = game.players.reduce((a, p) => a += p.bid.length, 0);
+
+    if (currentBids % game.players.length === 0) {
+
+        const tally = new Map();
+
+        game.players.forEach((p, i) => {
+            const points = p.bid.reduce((a, b) => a + b, 0);
+            tally.set(i, points);
+        });
+
+        const check = [...new Set(tally.values())];
+
+        if (tally.size === check.length) {
+            const highBid = Math.max(check);
+            const winKey = _.find(Array.from(tally), e => e[1] === highBid)[0];
+            game.players[winKey].score += prize.valueN;
+            cleanUp(game, prize);
         }
     }
 }
 
-module.exports = startGame;
+function checkScores(game, final = false) {
+
+    let highestScore = 0;
+    let winner       = null;
+
+    game.players.forEach(p => {
+        if (p.score > highestScore) {
+            highestScore = p.score;
+            if (final || p.score > 45.5) {
+                winner = p;
+            }
+        }
+    });
+
+    if (winner) winner.win = true;
+
+    return winner;
+}
+
+function cleanUp(game, prize) {
+    game.players.forEach(p => {
+        p.bid.forEach(c => {
+            Deck.returnCard({
+                from: p.bid,
+                to: game.deck,
+                pile: "discards",
+                card: c
+            });
+        });
+    });
+
+    Deck.returnCard({
+        from: game.deck.prize,
+        to: game.deck,
+        pile: "discards",
+        card: prize
+    });
+}
+
+function placeBid(user, game, bid) {
+    const currentPlayer = _.find(game.players, { userId: user });
+    _.pull(currentPlayer.hand, bid);
+    currentPlayer.bid.push(bid);
+}
+
+
+module.exports = calculate;
 
 
 

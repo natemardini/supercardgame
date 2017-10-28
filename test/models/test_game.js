@@ -1,69 +1,79 @@
+require("dotenv").config();
 
 const should = require("chai").should();
-const Game = require("../../models/game");
-const { Deck } = require("../../models/card");
+const Game = require("../../models/games");
+const User = require("../../models/users");
+const mongoose = require("mongoose");
+
+
 
 describe("Model Game's", () => {
 
-    const testGame = Game.create(1);
+    beforeEach((done) => {
+        if (mongoose.connection.db) return done();
+        mongoose.connect(process.env.MONGODB_URI, {
+            useMongoClient: true
+        }, done);
+    });
+
+    const testGame = new Game({ gameType: 1 });
 
     it("save() should return the object ID", (done) => {
-        testGame.save.then(() => {
-            testGame.id.should.be.a("number");
+        testGame.save((err, game) => {
+            if (err) throw err;
+            game._id.should.be.a("object");
             done();
         });
     });
 
-    it("findOne() should return a valid object", (done) => {
-        Game.findOne(testGame.id).then(game => {
-            game.should.be.an.instanceOf(Game);
-            game.game_type.should.be.a("number");
-            done();
+    it("addPlayer() should return add player to game", (done) => {
+        User.findOne({ handle: "Johnny" }).then((user) => {
+            testGame.addPlayer(user, () => {
+                testGame.addPlayer(user, done);
+            });
         });
     });
 
-    it("save() on same Game should return the same object ID", (done) => {
-        testGame.gameType = 2;
-        const currentId = testGame.id;
-        testGame.save
-            .then(() => Game.findOne(currentId))
-            .then(dbGame => {
-                dbGame.id.should.equal(currentId);
-                dbGame.should.be.an.instanceOf(Game);
-                dbGame.gameType.should.equal(2);
-                dbGame.cards.should.be.an.instanceOf(Deck);
-                dbGame.cards.prize.should.be.an("array");
-                dbGame.cards.prize[1].should.be.an("object");
+    it("addPlayer() should return add player to game", (done) => {
+        Game.findById(testGame._id).then((game) => {
+            game.setup();
+            game.save().then((game) => {
+                game.deck.should.be.an("object");
                 done();
             });
-    });
-
-    it("findAll() should return a result object", (done) => {
-        Game.findAll({}).then(result => {
-            result.should.be.an("array");
-            result[0].should.be.an.instanceOf(Game);
-            done();
         });
     });
 
-    it("total of all cards in standard deck should be 52", (done) => {
-        Game.findOne(testGame.id).then(game => {
-            const totalCards = game.cards.cards.length +
-                game.cards.prize.length +
-                game.cards.phand1.length +
-                game.cards.phand2.length +
-                game.cards.discards.length;
-
-            totalCards.should.equal(52);
-            done();
+    it("advanceRound() should change active player and advance round", (done) => {
+        Game.findById(testGame._id).then((game) => {
+            const currentRound = game.round;
+            game.advanceRound();
+            const nextPlayer = game.players.filter(p => p.active === true)[0];
+            nextPlayer.should.be.an("object");
+            game.round.should.equal(currentRound + 1);
+            game.advanceRound();
+            const furtherPlayer = game.players.filter(p => p.active === true)[0];
+            furtherPlayer._id.should.not.equal(nextPlayer._id);
+            game.round.should.equal(currentRound + 2);
+            game.save((err) => {
+                if (err) console.log(err);
+                done();
+            });
         });
     });
 
-    // it("destroy() should delete the object", (done) => {
-    //     testGame.destroy().then(result => {
-    //         result.should.equal(1);
-    //         done();
-    //     });
-    // });
+    it("computeRound() should change active player and advance round", (done) => {
+        Game.findById(testGame._id).then((game) => {
+            const player1 = game.players[0];
+
+            const input = {
+                prizeCard: game.deck.prize[3],
+                bidCard: player1.hand[2]
+            };
+
+            game.computeRound(player1.userId, input);
+            done();
+        });
+    });
 });
 

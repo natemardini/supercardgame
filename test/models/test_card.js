@@ -1,5 +1,5 @@
 const should = require("chai").should();
-const { Deck } = require("../../models/card");
+const { Deck } = require("../../logic/card");
 const _ = require("lodash");
 
 describe("Deck Class", () => {
@@ -64,9 +64,9 @@ describe("Deck Class", () => {
     });
 
     it("Putting card back in Deck works", (done) => {
-        let testDeck = Deck.create();
-        let hand = testDeck.giveCards(7);
-        let card = hand[3];
+        const testDeck = Deck.create();
+        const hand = testDeck.giveCards(7);
+        const card = hand[3];
 
         const statusCode = Deck.returnCard({
             from: hand,
@@ -82,9 +82,9 @@ describe("Deck Class", () => {
     });
 
     it("Putting card back in Deck discards works", (done) => {
-        let testDeck = Deck.create();
-        let hand = testDeck.giveCards(7);
-        let card = hand[3];
+        const testDeck = Deck.create();
+        const hand = testDeck.giveCards(7);
+        const card = hand[3];
 
         const statusCode = Deck.returnCard({
             from: hand,
