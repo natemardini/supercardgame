@@ -48,17 +48,31 @@ describe("Model Game's", () => {
         Game.findById(testGame._id).then((game) => {
             const currentRound = game.round;
             game.advanceRound();
-            let nextPlayer = game.players.filter(p => p.active === true)[0];
+            const nextPlayer = game.players.filter(p => p.active === true)[0];
             nextPlayer.should.be.an("object");
             game.round.should.equal(currentRound + 1);
             game.advanceRound();
-            let furtherPlayer = game.players.filter(p => p.active === true)[0];
+            const furtherPlayer = game.players.filter(p => p.active === true)[0];
             furtherPlayer._id.should.not.equal(nextPlayer._id);
             game.round.should.equal(currentRound + 2);
             game.save((err) => {
                 if (err) console.log(err);
                 done();
             });
+        });
+    });
+
+    it("computeRound() should change active player and advance round", (done) => {
+        Game.findById(testGame._id).then((game) => {
+            const player1 = game.players[0];
+
+            const input = {
+                prizeCard: game.deck.prize[3],
+                bidCard: player1.hand[2]
+            };
+
+            game.computeRound(player1.userId, input);
+            done();
         });
     });
 });

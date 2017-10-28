@@ -60,14 +60,14 @@ const { Deck } = require("./../logic/card");
     user1card: 10,
     user2card: 8 }
  */
-function startGame(user, game, query) {
+function calculate(game, user, input) {
 
     if (game.status === 3) {
         return game;
     }
 
-    placeBid(user, game, query.bidCard);
-    checkBids(game, query.prize);
+    placeBid(user, game, input.bidCard);
+    checkBids(game, input.prizeCard);
 
     if (game.round === 13) {
         checkScores(game, true);
@@ -113,7 +113,7 @@ function startGame(user, game, query) {
 
 function checkBids(game, prize) {
 
-    const currentBids = game.players.reduce((p, a) => a += p.bid.length, 0);
+    const currentBids = game.players.reduce((a, p) => a += p.bid.length, 0);
 
     if (currentBids % game.players.length === 0) {
 
@@ -181,7 +181,7 @@ function placeBid(user, game, bid) {
 }
 
 
-module.exports = startGame;
+module.exports = calculate;
 
 
 

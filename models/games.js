@@ -16,6 +16,7 @@ const playerSchema = new Schema({
     playerNo: Number,
     active:   Boolean,
     win:      Boolean,
+    bid:      [ cardSchema ],
     score:    Number,
     hand:     [ cardSchema ]
 });
@@ -68,8 +69,8 @@ gameSchema.methods.addPlayer = function (player, cb) {
 
 gameSchema.methods.advanceRound = function () {
     let index = _.findIndex(this.players, "active");
-    index === -1 ? index = _.random(0, this.players.length) : index;
-    this.players[index].active = false;
+    index === -1 ? index = _.random(0, this.players.length - 1) : index;
+    this.players[index]["active"] = false;
 
     let nextPlayer;
     if (index + 1 <= this.players.length - 1) {
@@ -106,14 +107,14 @@ gameSchema.methods.setup = function () {
     }
 };
 
-gameSchema.methods.computeRound = function (query) {
+gameSchema.methods.computeRound = function (user, input) {
     switch (this.gameType) {
     case 1:
-        require("./../logic/goofspiel")(this, query);
-        break;
+        require("./../logic/goofspiel")(this, user, input);
+        return;
 
     default:
-        break;
+        return;
     }
 };
 
