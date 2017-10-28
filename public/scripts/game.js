@@ -7,7 +7,7 @@ let prizeCard = {};
  */
 function initializeGame(){
     // Get json object for game 201 (hard-coded for now).
-    $.getJSON("http://localhost:8080/api/games/59f405bb51b71a62d27493ae", function(data) {
+    $.getJSON("http://localhost:8080/api/games/59f3d13d36769e4d01bd40af", function(data) {
 
         // Initial position for Player1 hand.
         let x = -500;
@@ -78,7 +78,7 @@ function bid(bidCard, suitName){
     console.log(bidCards);
     $.ajax({
         type: "POST",
-        url: "/api/games/59f405bb51b71a62d27493ae",
+        url: "/api/games/59f3d13d36769e4d01bd40af",
         data: JSON.stringify(bidCards),//JSON.stringify(bidCards),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -92,8 +92,8 @@ function bid(bidCard, suitName){
 
 /**
  *  This function is used to shift the players hand cards as bids are made.
- * @param {string} oldCard 
- * @param {string} bidPosition 
+ * @param {string} oldCard
+ * @param {string} bidPosition
  */
 function moveCard(oldCard, bidPosition){
     // Get the card right of the bid card.

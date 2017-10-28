@@ -1,5 +1,6 @@
 const _ = require("lodash");
 const { Deck } = require("./../logic/card");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 
 
@@ -66,8 +67,10 @@ function calculate(game, user, input) {
         return game;
     }
 
-    placeBid(user, game, input.bidCard);
-    checkBids(game, input.prizeCard);
+    const { bidCard, prizeCard } = input;
+
+    placeBid(user, game, bidCard);
+    checkBids(game, prizeCard);
 
     if (game.round === 13) {
         checkScores(game, true);
@@ -175,7 +178,12 @@ function cleanUp(game, prize) {
 }
 
 function placeBid(user, game, bid) {
-    const currentPlayer = _.find(game.players, { userId: user });
+    //const currentPlayer = _.find(game.players, { "userId": ObjectId(user) });
+    const currentPlayer = game.players.filter(p => {
+        let str  = p.userId.toString();
+        return str === user;
+    })[0];
+
     _.pull(currentPlayer.hand, bid);
     currentPlayer.bid.push(bid);
 }
