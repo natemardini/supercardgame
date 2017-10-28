@@ -27,9 +27,9 @@ function initializeGame(){
             createCard(0, value["suit"], value["valueN"], 40, 80);
             addCardClick(0, value["suit"], value["valueN"], 40, 230);
             prizeCard = {"deck": data["deck"]["id"] ,
-                        "suit": value["suit"],
-                        "value": value["valueN"]
-        }
+                "suit": value["suit"],
+                "value": value["valueN"]
+            }
         });
 
         // Create player2 hand.
@@ -41,7 +41,7 @@ function initializeGame(){
 }
 
 /**
- * movecard
+ * addCardClick
  * @param {*} x
  * @param {*} suitName
  * @param {*} rankName
@@ -52,9 +52,12 @@ function initializeGame(){
 function addCardClick(i, suitName, rankName, x, y) {
     let divName = "div.card." + suitName +".rank" + rankName;
     $("body").on("click", divName, (event) => {
+        let bidCardPosition = $(event.currentTarget).css("transform");
         zIndex += 2;
         $(event.currentTarget).css("transform", `translate(${x}px, ${y}px)`).css("z-index", zIndex);
-        bid(rankName, suitName)
+        bid(rankName, suitName);
+        console.log(bidCardPosition)
+        moveCard(divName, bidCardPosition);
     });
 
 }
@@ -85,8 +88,26 @@ function bid(bidCard, suitName){
         failure: function(errMsg) {
             alert(errMsg);
         }
-  });
+    });
 
+}
+
+/**
+ *  This function is used to shift the players hand cards as bids are made.
+ * @param {any} oldCard 
+ * @param {any} nextCard 
+ */
+function moveCard(oldCard, bidPosition){
+    let leftCard = $(oldCard).prev();
+    let rightCard = $(oldCard).next();
+    let leftCardClass = leftCard.attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
+    let rightCardClass = rightCard.attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
+    let bidCardPosition = rightCard.css("transform");
+
+    if (leftCardClass === rightCardClass){
+        $(rightCard).css("transform", bidPosition);
+        moveCard(rightCard, bidCardPosition);
+    }
 }
 
 /**
@@ -233,18 +254,7 @@ function createCard(i, suitName, rankName, x, y){
     self.z = z;
     self.rot = 0;
 
-    // set default side to back
-    //self.setSide("front");
-
     $el.appendChild($face);
-
-    // // set rank & suit
-    // self.setRankSuit = function (rank, suit) {
-    //     //let suitName = SuitName(suit);
-    //     $el.setAttribute("class", "card " + suitName + " rank" + rank);
-    // };
-
-    // self.setRankSuit(rank, suit);
 
     // add drag/click listeners
     // addListener($el, "mousedown", onMousedown);
@@ -272,25 +282,6 @@ function createCard(i, suitName, rankName, x, y){
         self.$root && self.$root.removeChild($el);
         self.$root = null;
     }
-
-    // function setSide(newSide) {
-    //     // flip sides
-    //     if (newSide === "front") {
-    //         if (self.side === "back") {
-    //             $el.removeChild($back);
-    //         }
-    //         self.side = "front";
-    //         $el.appendChild($face);
-    //         self.setRankSuit(self.rank, self.suit);
-    //     } else {
-    //         if (self.side === "front") {
-    //             $el.removeChild($face);
-    //         }
-    //         self.side = "back";
-    //         $el.appendChild($back);
-    //         $el.setAttribute("class", "card");
-    //     }
-    // }
 
 }
 
