@@ -4,8 +4,8 @@ require("dotenv").config();
 
 const PORT           = process.env.PORT || 8080;
 const express        = require("express");
-const session = require("express-session");
-const MongoStore = require('connect-mongo')(session);
+const session        = require("express-session");
+const MongoStore     = require("connect-mongo")(session);
 const passport       = require("./logic/passport");
 const bodyParser     = require("body-parser");
 const sass           = require("node-sass-middleware");
@@ -25,7 +25,7 @@ app.use(morgan("dev"));
 // SESSIONS
 app.use(methodOverride("_method"));
 app.use(session({
-    secret: "sky is falling",
+    secret: "sky is falling", // TODO: Replace with environment variable
     store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
 app.use(passport.initialize());

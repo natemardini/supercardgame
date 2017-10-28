@@ -27,7 +27,7 @@ passport.deserializeUser(function (id, cb) {
     });
 });
 
-passport.auth = (req, res, next) => {
+passport.restricted = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
     } else {
