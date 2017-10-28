@@ -55,10 +55,6 @@ function addCardClick(i, suitName, rankName, x, y) {
         zIndex += 2;
         $(event.currentTarget).css("transform", `translate(${x}px, ${y}px)`).css("z-index", zIndex).addClass("played");
         bid(rankName, suitName);
-<<<<<<< HEAD
-=======
-        console.log(bidCardPosition);
->>>>>>> d81e3f12d2498f6903816ea9660abf4c9b7eab55
         moveCard(divName, bidCardPosition);
     });
 
@@ -109,13 +105,13 @@ function moveCard(oldCard, bidPosition){
     }
 
     // Get the suit from the class and only move cards from the same hand/pile.
-    const oldCardClass = $(oldCard).attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
-    const rightCardClass = rightCard.attr('class').replace("card ", "").replace(" rank", "").substr(0, 4);
+    const oldCardClass = $(oldCard).attr("class").replace("card ", "").replace(" rank", "").substr(0, 4);
+    const rightCardClass = rightCard.attr("class").replace("card ", "").replace(" rank", "").substr(0, 4);
     
     // Get the bid card position so we can shift all the cards to that position
     const bidCardPosition = rightCard.css("transform");
 
-    // Add logic to check the next card against played cards.
+    // If the card to the right of the bid card is the same suit, move it to that position, then repeat for the rest of the hand.
     if (oldCardClass === rightCardClass){
         $(rightCard).css("transform", bidPosition);
         moveCard(rightCard, bidCardPosition);
