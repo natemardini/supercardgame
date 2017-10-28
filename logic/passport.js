@@ -21,9 +21,18 @@ passport.serializeUser(function (user, cb) {
 });
 
 passport.deserializeUser(function (id, cb) {
-    User.findOne(id)
-        .then(user => cb(null, user))
-        .catch(err => cb(err));
+    User.findById(id, (err, user) => {
+        if (err) cb(err);
+        cb(null, user);
+    });
 });
+
+passport.auth = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        res.redirect(303, "/");
+    }
+};
 
 module.exports = passport;

@@ -2,15 +2,17 @@
 
 require("dotenv").config();
 
-const PORT       = process.env.PORT || 8080;
-const express    = require("express");
-const session    = require("express-session");
-const passport   = require("./logic/passport");
-const bodyParser = require("body-parser");
-const sass       = require("node-sass-middleware");
-const app        = express();
-const morgan     = require("morgan");
-const mongoose   = require("mongoose");
+const PORT           = process.env.PORT || 8080;
+const express        = require("express");
+const session = require("express-session");
+const MongoStore = require('connect-mongo')(session);
+const passport       = require("./logic/passport");
+const bodyParser     = require("body-parser");
+const sass           = require("node-sass-middleware");
+const app            = express();
+const morgan         = require("morgan");
+const mongoose       = require("mongoose");
+const methodOverride = require("method-override");
 
 // DATABASE
 mongoose.Promise = global.Promise;
@@ -21,18 +23,16 @@ mongoose.set("debug", true);
 app.use(morgan("dev"));
 
 // SESSIONS
+app.use(methodOverride("_method"));
 app.use(session({
-    secret: "the sky is falling",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
+    secret: "sky is falling",
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
 // MISC
 app.set("view engine", "ejs");
-app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/styles", sass({
@@ -41,6 +41,8 @@ app.use("/styles", sass({
     debug: true,
     outputStyle: "expanded"
 }));
+app.use(express.static("public"));
+
 
 // Mount all resource routes
 app.use("/users", require("./routes/users")(passport));
