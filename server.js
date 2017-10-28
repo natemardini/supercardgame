@@ -36,14 +36,14 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/styles", sass({
-    src: `${__dirname  }/styles`,
-    dest: `${__dirname  }/public/styles`,
+    src: `${__dirname}/styles`,
+    dest: `${__dirname}/public/styles`,
     debug: true,
     outputStyle: "expanded"
 }));
 
 // Mount all resource routes
-app.use("/api/users", require("./routes/users")(passport));
+app.use("/users", require("./routes/users")(passport));
 app.use("/api/games", require("./routes/games")(passport));
 app.use("/", require("./routes/home")(passport));
 

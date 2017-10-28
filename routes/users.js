@@ -5,10 +5,14 @@ const User = require("../models/user");
 
 module.exports = (passport) => {
     /**
-     * GET /api/users
+     * GET /users
      */
     router.get("/", (req, res) => {
 
+    });
+
+    router.get("/register", (req, res) => {
+        res.render("users/register");
     });
 
     /**

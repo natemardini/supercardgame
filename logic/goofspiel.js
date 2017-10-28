@@ -179,8 +179,7 @@ function cleanUp(game, prize) {
 function placeBid(user, game, bid) {
     //const currentPlayer = _.find(game.players, { "userId": ObjectId(user) });
     const currentPlayer = game.players.filter(p => {
-        let str  = p.userId.toString();
-        return str === user;
+        return p.userId.toString() === user;
     })[0];
 
     _.pull(currentPlayer.hand, bid);
