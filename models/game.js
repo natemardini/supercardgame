@@ -1,7 +1,9 @@
 const Model = require("../db/model");
 const Match = require("./match");
-const { Deck } = require("./card");
+const { Deck } = require("./../logic/card");
 const _ = require("lodash");
+
+
 
 class Game extends Model {
 

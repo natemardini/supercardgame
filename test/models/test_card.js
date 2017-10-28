@@ -1,5 +1,5 @@
 const should = require("chai").should();
-const { Deck } = require("../../models/card");
+const { Deck } = require("../../logic/card");
 const _ = require("lodash");
 
 describe("Deck Class", () => {

@@ -1,5 +1,7 @@
 const _ = require("lodash");
 
+
+
 /**
  * function: create an array of 13 elements
  */

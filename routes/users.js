@@ -7,21 +7,15 @@ module.exports = (passport) => {
     /**
      * GET /api/users
      */
-    router.get("/",
-        (req, res) => {
-            User.findAll({}).then(users => {
-                res.json(users);
-            });
-        }
-    );
+    router.get("/", (req, res) => {
+
+    });
 
     /**
      * PUT /api/users
      */
     router.put("/", (req, res) => {
-        User.findAll({}).then(users => {
-            res.json(users);
-        });
+
     });
 
     /**
@@ -51,14 +45,9 @@ module.exports = (passport) => {
     router.delete("/",
         passport.authenticate("local"),
         (req, res) => {
-            User.findOne({ handle: "bob" })
-                .then(user => user.matches)
-                .then(games => res.json(games))
-                .catch(e => res.json(e));
+
         }
     );
 
     return router;
 };
-
-

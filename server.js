@@ -2,10 +2,6 @@
 
 require("dotenv").config();
 
-module.exports = {
-
-};
-
 const PORT       = process.env.PORT || 8080;
 const express    = require("express");
 const session    = require("express-session");
@@ -14,12 +10,16 @@ const bodyParser = require("body-parser");
 const sass       = require("node-sass-middleware");
 const app        = express();
 const morgan     = require("morgan");
-const DBConn     = require("./db/model").dbConnection;
-const knexLogger = require("knex-logger");
+//const DBConn     = require("./db/model").dbConnection;
+//const knexLogger = require("knex-logger");
+const mongoose = require("mongoose");
+
+mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
+mongoose.set("debug", true);
 
 // LOGGERS
 app.use(morgan("dev"));
-app.use(knexLogger(DBConn));
+//app.use(knexLogger(DBConn));
 
 // SESSIONS
 app.use(session({
