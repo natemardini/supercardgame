@@ -6,38 +6,56 @@ let prizeCard = {};
  *
  */
 function initializeGame(){
+    $("#Start").click(function() {
+        $( ".card" ).remove(); // remove all the cards on the screen and start a new game
     // Get json object for game 201 (hard-coded for now).
-    $.getJSON("http://localhost:8080/api/games/59f55699bd50cb6a3f04900a", function(data) {
+        $.getJSON("http://localhost:8080/api/games/59f55699bd50cb6a3f04900a", function(data) {
 
         // Initial position for Player1 hand.
         let x = -500;
         const y = 400;
+            // Create player1 hand and deal cards.
+            $.each(data["players"][0]["hand"], function(key, value) {
+                createCard(0, value["suit"], value["valueN"], -600, 400);
+                testCard(value["suit"], value["valueN"], x, y);
 
-        // Create player1 hand and deal cards.
-        $.each(data["players"][0]["hand"], function(key, value) {
-            createCard(0, value["suit"], value["valueN"], x, y);
-            // If there's more cards, the next one should be shifted +90.
-            x +=90;
-            addCardClick(0, value["suit"], value["valueN"], -50, 230);
+
+                // If there's more cards, the next one should be shifted +90.
+                x +=90;
+                addCardClick(0, value["suit"], value["valueN"], -50, 230);
+            });
+
+
+            // create prize cards
+            $.each(data["deck"]["prize"], function(key, value) {
+                createCard(0, value["suit"], value["valueN"], 40, 80);
+                addCardClick(0, value["suit"], value["valueN"], 40, 230);
+                prizeCard = { "deck": data["deck"]["id"] ,
+                    "suit": value["suit"],
+                    "value": value["valueN"]
+                };
+            });
+
+            // Create player2 hand.
+            $.each(data["players"][1]["hand"], function(key, value) {
+                createCard(0, value["suit"], value["valueN"], 200, 80);
+                addCardClick(0, value["suit"], value["valueN"], 130, 230);
+            });
         });
 
-        // create prize cards
-        $.each(data["deck"]["prize"], function(key, value) {
-            createCard(0, value["suit"], value["valueN"], 40, 80);
-            addCardClick(0, value["suit"], value["valueN"], 40, 230);
-            prizeCard = { "deck": data["deck"]["id"] ,
-                "suit": value["suit"],
-                "value": value["valueN"]
-            };
-        });
-
-        // Create player2 hand.
-        $.each(data["players"][1]["hand"], function(key, value) {
-            createCard(0, value["suit"], value["valueN"], 200, 80);
-            addCardClick(0, value["suit"], value["valueN"], 130, 230);
-        });
     });
 }
+
+/**
+ * test card function
+ */
+function testCard (suit, rank, x, y){
+    // let transform = prefix("transform");
+
+    let $changePoz = document.getElementById(`card_${suit}_rank${rank}`);
+    setTimeout(function(){ $changePoz.style.transform = `translate(${x  }px, ${y  }px)`;}, 100);
+}
+
 
 /**
  * addCardClick
@@ -82,7 +100,7 @@ function bid(bidCard, suitName){
         data: JSON.stringify(bidCards),//JSON.stringify(bidCards),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function(data){alert(data);},
+        success: function(data){console.log(data);},
         failure: function(errMsg) {
             alert(errMsg);
         }
@@ -230,13 +248,14 @@ function createCard(i, suitName, rankName, x, y){
 
     // Set the suit/rank.
     $el.setAttribute("class", `card ${  suitName  } rank${  rankName}`);
+    $el.setAttribute("id", `card_${suitName}_rank${rankName}`);
 
     const $container = document.getElementById("container");
 
     $container.appendChild($el);
 
     // self = card
-    const self = { i: i, rank: rank, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
+    // const self = { i: i, rank: rank, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
 
     //let modules = Deck.modules;
     //let module;
@@ -247,13 +266,15 @@ function createCard(i, suitName, rankName, x, y){
 
     // add default transform
     //$el.style[transform] = translate(-z + "px", -z + "px");
+    // $el.style[transform] = translate(`${-50  }px`, `${80  }px`);
     $el.style[transform] = translate(`${x  }px`, `${y  }px`);
+    // $el.style.visibility = 'hidden';
 
     // add default values
-    self.x = -z;
-    self.y = -z;
-    self.z = z;
-    self.rot = 0;
+    // self.x = -z;
+    // self.y = -z;
+    // self.z = z;
+    // self.rot = 0;
 
     $el.appendChild($face);
 
@@ -266,23 +287,23 @@ function createCard(i, suitName, rankName, x, y){
     //     addModule(modules[module]);
     // }
 
-    function addModule(module) {
-        // add card module
-        module.card && module.card(self);
-    }
+    // function addModule(module) {f
+    //     // add card module
+    //     module.card && module.card(self);
+    // }
 
-    function mount(target) {
-        // mount card to target (deck)
-        target.appendChild($el);
+    // function mount(target) {
+    //     // mount card to target (deck)
+    //     target.appendChild($el);
 
-        self.$root = target;
-    }
+    //     self.$root = target;
+    // }
 
-    function unmount() {
-        // unmount from root (deck)
-        self.$root && self.$root.removeChild($el);
-        self.$root = null;
-    }
+    // function unmount() {
+    //     // unmount from root (deck)
+    //     self.$root && self.$root.removeChild($el);
+    //     self.$root = null;
+    // }
 
 }
 
