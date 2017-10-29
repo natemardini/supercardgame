@@ -25,8 +25,14 @@ app.use(morgan("dev"));
 // SESSIONS
 app.use(methodOverride("_method"));
 app.use(session({
-    secret: "sky is falling", // TODO: Replace with environment variable
-    store: new MongoStore({ mongooseConnection: mongoose.connection })
+    name:              "supercardgame.sid",
+    secret:            "sky is falling", // TODO: Replace with environment variable
+    maxAge:            2 * 24 * 60 * 60 * 1000,
+    resave:            true,
+    saveUninitialized: false,
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
