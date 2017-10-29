@@ -22,7 +22,7 @@ module.exports = (passport) => {
     * GET /api/games
     */
     router.get("/pending", passport.restricted, (req, res) => {
-        Game.find({ status: 1 }).populate("players.userId", "handle").then(games => {
+        Game.find({ status: 1 }).populate({ path: "players.userId", select: "handle" }).then(games => {
             res.json(games);
         }).catch(e => res.json(e));
     });
