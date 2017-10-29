@@ -8,14 +8,20 @@ let prizeCard = {};
 function initializeGame(gameID){
     $("#Start").click(function() {
         $( ".card" ).remove(); // remove all the cards on the screen and start a new game
-    // Get json object for game 201 (hard-coded for now).
         $.getJSON(`http://localhost:8080/api/games/${gameID}`, function(data) {
 
         // Initial position for Player1 hand.
         let x = -500;
         const y = 400;
+
+        const userPlayer = data.game.players.filter(p => {
+            return p.userId === data.player;
+        })[0]
+
+        console.log(userPlayer);
+
             // Create player1 hand and deal cards.
-            $.each(data["players"][0]["hand"], function(key, value) {
+            $.each(userPlayer["hand"], function(key, value) {
                 createCard(0, value["suit"], value["valueN"], -600, 400);
                 testCard(value["suit"], value["valueN"], x, y);
 
@@ -27,7 +33,7 @@ function initializeGame(gameID){
 
 
             // create prize cards
-            $.each(data["deck"]["prize"], function(key, value) {
+            $.each(data["game"]["deck"]["prize"], function(key, value) {
                 createCard(0, value["suit"], value["valueN"], 40, 80);
                 addCardClick(0, value["suit"], value["valueN"], 40, 230);
                 prizeCard = { "deck": data["deck"]["id"] ,
@@ -37,10 +43,10 @@ function initializeGame(gameID){
             });
 
             // Create player2 hand.
-            $.each(data["players"][1]["hand"], function(key, value) {
-                createCard(0, value["suit"], value["valueN"], 200, 80);
-                addCardClick(0, value["suit"], value["valueN"], 130, 230);
-            });
+            // $.each(data["players"][1]["hand"], function(key, value) {
+            //     createCard(0, value["suit"], value["valueN"], 200, 80);
+            //     addCardClick(0, value["suit"], value["valueN"], 130, 230);
+            // });
         });
 
     });
