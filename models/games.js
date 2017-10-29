@@ -41,9 +41,9 @@ const gameSchema = new Schema({
 // GAME METHODS
 gameSchema.pre("save", function (next) {
     if (this.isNew) {
-        this.status = Number(this.status);
         this.round = 1;
         this.status = 1;
+        this.gameType = Number(this.gameType);
     }
     this.status === 1 && this.checkStartRequirements() && this.setup();
     next();
@@ -120,6 +120,7 @@ gameSchema.methods.setup = function () {
         break;
     }
 
+    //TODO: Add email to users notifying them of new game.
     this.status = 2;
 };
 
@@ -140,6 +141,10 @@ gameSchema.statics.findMatch = function (user, gameType, cb) {
         const game = _.sample(games);
         game.addPlayer(user, cb);
     }).catch(e => cb(e));
+
+    function locate(params) {
+
+    }
 };
 
 gameSchema.methods.checkStartRequirements = function () {
