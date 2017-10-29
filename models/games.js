@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const {
-    Deck
-} = require("../logic/card");
+const { Deck } = require("../logic/card");
 const _ = require("lodash");
 
 // SCHEMAS
@@ -132,9 +130,10 @@ gameSchema.methods.computeRound = function (user, input) {
 
 gameSchema.statics.findMatch = function (user, gameType, cb) {
     this.find({ status: 1, gameType }).then(games => {
+        // TODO: Add functionality when no games found
         const game = _.sample(games);
         game.addPlayer(user, cb);
-    });
+    }).catch(e => cb(e));
 };
 
 gameSchema.methods.checkStartRequirements = function () {
