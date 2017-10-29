@@ -74,8 +74,8 @@ function parseActiveGames(data) {
 
         const creator = game.players[0].userId["handle"] || "Bot";
         const userPlayer = game.players.filter(p => {
-            p.userId === currentPlayer;
-        });
+            return p.userId === currentPlayer;
+        })[0];
 
         let status = "";
 
