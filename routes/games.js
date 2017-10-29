@@ -73,8 +73,10 @@ module.exports = (passport) => {
      */
     router.post("/:id", passport.restricted, (req, res) => {
         Game.findById(req.params.id).then(game => {
-            game.computeRound(req.user, req.body);
-            res.json(game);
+            game.computeRound(req.user, req.body, (err, uGame) => {
+                if (err) throw err;
+                res.json(uGame);
+            });
         }).catch(e => res.status(500).json(e));
     });
 

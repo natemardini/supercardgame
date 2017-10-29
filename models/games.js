@@ -126,7 +126,7 @@ gameSchema.methods.setup = function () {
     this.status = 2;
 };
 
-gameSchema.methods.computeRound = function (user, input) {
+gameSchema.methods.computeRound = function (user, input, cb) {
     let game, winner;
 
     switch (this.gameType) {
@@ -139,7 +139,14 @@ gameSchema.methods.computeRound = function (user, input) {
     }
 
     if (winner) {
-        game.endGame();
+        game.endGame().then(() => {
+            return cb(null, game);
+        });
+    } else {
+        game.save((err, game) => {
+            if (err) throw err;
+            cb(null, game);
+        });
     }
 };
 
