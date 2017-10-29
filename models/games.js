@@ -136,14 +136,39 @@ gameSchema.methods.computeRound = function (user, input) {
 };
 
 gameSchema.statics.findMatch = function (user, gameType, cb) {
-    this.find({ status: 1, gameType }).then(games => {
-        // TODO: Add functionality when no games found
-        const game = _.sample(games);
-        game.addPlayer(user, cb);
+    let game = null;
+
+    this.find({ status: 1, gameType }).populate("userId.ranking").then(games => {
+        findBestRankingGame(user, games);
+        if (game) {
+            game.addPlayer(user, cb);
+        } else {
+            cb(new Error("No games available"));
+        }
     }).catch(e => cb(e));
 
-    function locate(params) {
+    function findBestRankingGame(user, games, delta = 50, i = 0) {
+        if (games.length === 0 || i === 10) return;
 
+        const minLimit = user.ranking - delta;
+        const maxLimit = user.ranking + delta;
+
+        const eligibleGames = _.filter(games, g => {
+            if (_.find(g.players, (p => p.userId._id === user._id))) {
+                return false;
+            } else if (minLimit <= g.players[0].ranking <= maxLimit) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        if (eligibleGames.length > 0) {
+            game = _.sample(eligibleGames);
+            return;
+        } else {
+            findBestRankingGame(user, games, delta + 50, i + 1);
+        }
     }
 };
 
