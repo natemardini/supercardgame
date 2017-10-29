@@ -22,6 +22,7 @@ const playerSchema = new Schema({
     win: Boolean,
     bid: [cardSchema],
     score: Number,
+    atRound: Number,
     hand: [cardSchema]
 });
 
@@ -112,6 +113,7 @@ gameSchema.methods.setup = function () {
             player.win = false;
             player.playerNo = index + 1;
             player.bid = [];
+            player.atRound = 1;
         });
         this.deck.discards = deck.giveCards();
         break;
@@ -138,7 +140,7 @@ gameSchema.methods.computeRound = function (user, input) {
 gameSchema.statics.findMatch = function (user, gameType, cb) {
     let game = null;
 
-    this.find({ status: 1, gameType }).populate("userId.ranking").then(games => {
+    this.find({ status: 1, gameType }).populate("players.userId" , "ranking").then(games => {
         findBestRankingGame(user, games);
         if (game) {
             game.addPlayer(user, cb);
@@ -154,13 +156,10 @@ gameSchema.statics.findMatch = function (user, gameType, cb) {
         const maxLimit = user.ranking + delta;
 
         const eligibleGames = _.filter(games, g => {
-            if (_.find(g.players, (p => p.userId._id === user._id))) {
-                return false;
-            } else if (minLimit <= g.players[0].ranking <= maxLimit) {
-                return true;
-            } else {
-                return false;
-            }
+            const ownGame = _.find(g.players, ["userId._id", user._id]);
+            const creatorRank = g.players[0].ranking || 1000;
+
+            return !ownGame && (creatorRank >= minLimit && creatorRank <= maxLimit);
         });
 
         if (eligibleGames.length > 0) {
