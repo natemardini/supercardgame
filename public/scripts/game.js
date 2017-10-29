@@ -7,12 +7,13 @@ $(document).ready(function () {
 
 let zIndex = 100;
 let prizeCard = {};
-
+let gameID;
 /**
  * This function pulls in the game data then 'deals' the cards.
  *
  */
-function initializeGame(gameID){
+function initializeGame(gID){
+    gameID = gID;
     $("#Start").click(function() {
         $( ".card" ).remove(); // remove all the cards on the screen and start a new game
         $.getJSON(`/api/games/${gameID}`, function(data) {
@@ -109,7 +110,7 @@ function bid(bidCard, suitName){
     console.log(bidCards);
     $.ajax({
         type: "POST",
-        url: "/api/games/59f55699bd50cb6a3f04900a",
+        url: `/api/games/${gameID}`,
         data: JSON.stringify(bidCards),//JSON.stringify(bidCards),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
