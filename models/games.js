@@ -51,6 +51,11 @@ gameSchema.pre("save", function (next) {
 gameSchema.methods.addPlayer = function (player, cb) {
     const that = this;
 
+    const exist = _.find(that.players, { userId: player._id });
+    if (exist) {
+        return cb(new Error("Already in this game"));
+    }
+
     const _player = new Player({
         userId: player._id,
         playerNo: this.players.length + 1,

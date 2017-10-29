@@ -57,8 +57,11 @@ module.exports = (passport) => {
     router.put("/join", passport.restricted, (req, res) => {
         Game.findById(req.body.id).then(game => {
             game.addPlayer(req.user, (err, game) => {
-                if (err) throw err;
-                res.sendStatus(200);
+                if (err) {
+                    res.status(403).send(err.message);
+                } else {
+                    res.sendStatus(200);
+                }
             });
         });
     });
