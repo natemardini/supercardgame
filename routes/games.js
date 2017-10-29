@@ -71,7 +71,7 @@ module.exports = (passport) => {
     /**
      * POST /api/games/[id]
      */
-    router.post("/:id", (req, res) => {
+    router.post("/:id", passport.restricted, (req, res) => {
         Game.findById(req.params.id).then(game => {
             game.computeRound(req.user, req.body);
             res.json(game);
