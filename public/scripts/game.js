@@ -1,3 +1,10 @@
+console.log(window.location.split("/").reverse()[0]);
+$(document).ready(function () {
+    // REMOVE THIS and replace with call event on click.
+    initializeGame(window.location.split("/").reverse()[0]);
+});
+
+
 let zIndex = 100;
 let prizeCard = {};
 
@@ -8,7 +15,7 @@ let prizeCard = {};
 function initializeGame(gameID){
     $("#Start").click(function() {
         $( ".card" ).remove(); // remove all the cards on the screen and start a new game
-        $.getJSON(`http://localhost:8080/api/games/${gameID}`, function(data) {
+        $.getJSON(`/api/games/${gameID}`, function(data) {
 
         // Initial position for Player1 hand.
         let x = -500;

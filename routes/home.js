@@ -13,8 +13,8 @@ module.exports = (passport) => {
     /**
      * GET /html
      */
-    router.get("/html", (req, res) => {
-        res.render("game");
+    router.get("/game/:id", passport.restricted, (req, res) => {
+        res.render("games/show");
     });
 
     return router;
