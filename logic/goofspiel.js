@@ -71,13 +71,15 @@ function calculate(game, user, input) {
     placeBid(user, game, bidCard);
     checkBids(game, prizeCard);
 
+    let winner = null;
+
     if (game.round === 13) {
-        checkScores(game, true);
+        winner = checkScores(game, true);
     } else {
-        checkScores(game);
+        winner = checkScores(game);
     }
 
-    return game;
+    return [game, winner];
 }
 
 
@@ -114,6 +116,7 @@ function calculate(game, user, input) {
 // }
 
 function checkBids(game, prize) {
+    prize = _.find(game.deck.prize, { valueN: prize.value, suit: prize.suit });
 
     const currentBids = game.players.reduce((a, p) => a += p.bid.length, 0);
 
@@ -122,18 +125,22 @@ function checkBids(game, prize) {
         const tally = new Map();
 
         game.players.forEach((p, i) => {
-            const points = p.bid.reduce((a, b) => a + b, 0);
+            const points = p.bid.reduce((acc, bid) => {
+                return acc + bid.valueN;
+            }, 0); // fixme
             tally.set(i, points);
         });
 
-        const check = [...new Set(tally.values())];
+        let check = [...new Set(tally.values())];
 
         if (tally.size === check.length) {
-            const highBid = Math.max(check);
+            const highBid = Math.max(...check);
             const winKey = _.find(Array.from(tally), e => e[1] === highBid)[0];
             game.players[winKey].score += prize.valueN;
             cleanUp(game, prize);
         }
+
+        game.advanceRound();
     }
 }
 
@@ -178,12 +185,11 @@ function cleanUp(game, prize) {
 
 function placeBid(user, game, bid) {
     //const currentPlayer = _.find(game.players, { "userId": ObjectId(user) });
-    const currentPlayer = game.players.filter(p => {
-        return p.userId.toString() === user;
-    })[0];
+    const currentPlayer = _.find(game.players, { "userId": user._id });
+    const bidCard = _.find(currentPlayer.hand, { valueN: bid.value, suit: bid.suit });
 
-    _.pull(currentPlayer.hand, bid);
-    currentPlayer.bid.push(bid);
+    _.pull(currentPlayer.hand, bidCard);
+    currentPlayer.bid.push(bidCard);
     currentPlayer.atRound = game.round + 1;
 }
 
