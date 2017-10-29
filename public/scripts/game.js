@@ -28,7 +28,7 @@ function initializeGame(gID){
             return p.userId === data.player;
         })[0]
 
-        console.log(userPlayer);
+        console.log(data);
 
             // Create player1 hand and deal cards.
             $.each(userPlayer["hand"], function(key, value) {
@@ -46,17 +46,11 @@ function initializeGame(gID){
             $.each(data["game"]["deck"]["prize"], function(key, value) {
                 createCard(0, value["suit"], value["valueN"], 40, 80);
                 addCardClick(0, value["suit"], value["valueN"], 40, 230);
-                prizeCard = { "deck": data["deck"]["id"] ,
+                prizeCard = {
                     "suit": value["suit"],
                     "value": value["valueN"]
                 };
             });
-
-            // Create player2 hand.
-            // $.each(data["players"][1]["hand"], function(key, value) {
-            //     createCard(0, value["suit"], value["valueN"], 200, 80);
-            //     addCardClick(0, value["suit"], value["valueN"], 130, 230);
-            // });
         });
 
     });
@@ -102,7 +96,7 @@ function addCardClick(i, suitName, rankName, x, y) {
 function bid(bidCard, suitName){
     const bidCards = {
         bidCard: {
-            "deck": prizeCard["deck"],
+            // "deck": prizeCard["deck"],
             "suit": suitName,
             "value": bidCard
         },
