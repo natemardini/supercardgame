@@ -6,27 +6,36 @@
   "scripts": {
     "test": "mocha 'test/**/*.js'",
     "start": "node server.js",
-    "local": "./node_modules/.bin/nodemon --ignore public/",
-    "knex": "./node_modules/.bin/knex"
+    "local": "./node_modules/.bin/nodemon --ignore public/"
   },
   "author": "Lighthouse Labs",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.15.2",
+    "connect-mongo": "^2.0.0",
     "dotenv": "^2.0.0",
     "ejs": "^2.4.1",
+    "elo-rank": "^1.0.3",
     "express": "^4.13.4",
+    "express-session": "^1.15.6",
     "knex": "^0.11.7",
     "knex-logger": "^0.1.0",
     "lodash": "^4.17.4",
+    "method-override": "^2.3.10",
+    "mongoose": "^4.12.4",
     "morgan": "^1.7.0",
     "node-sass-middleware": "^0.9.8",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "pg": "^6.0.2",
-    "pluralize": "^7.0.0"
+    "pluralize": "^7.0.0",
+    "socket.io": "^2.0.4"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^4.0.1",
+    "mocha-mongoose": "^1.2.0",
     "nodemon": "^1.9.2",
     "sqlite3": "^3.1.4"
   }

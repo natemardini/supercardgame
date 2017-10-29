@@ -2,52 +2,60 @@
 
 require("dotenv").config();
 
-const PORT       = process.env.PORT || 8080;
-const ENV        = process.env.ENV || "development";
-const express    = require("express");
-const bodyParser = require("body-parser");
-const sass       = require("node-sass-middleware");
-const app        = express();
-const morgan     = require("morgan");
-const knexConfig = require("./knexfile");
-const knex       = require("knex")(knexConfig[ENV]);
-const knexLogger = require("knex-logger");
+const PORT           = process.env.PORT || 8080;
+const express        = require("express");
+const session        = require("express-session");
+const MongoStore     = require("connect-mongo")(session);
+const passport       = require("./logic/passport");
+const bodyParser     = require("body-parser");
+const sass           = require("node-sass-middleware");
+const app            = express();
+const morgan         = require("morgan");
+const mongoose       = require("mongoose");
+const methodOverride = require("method-override");
 
-// Seperated Routes for each Resource
-const usersRoutes = require("./routes/users");
+// DATABASE
+mongoose.Promise = global.Promise;
+mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
+mongoose.set("debug", true);
 
-// Load the logger first so all (static) HTTP requests are logged to STDOUT
-// 'dev' = Concise output colored by response status for development use.
-// The :status token will be colored red for server error codes,
-// yellow for client error codes, cyan for redirection codes,
-// and uncolored for all other codes.
+// LOGGERS
 app.use(morgan("dev"));
 
-// Log knex SQL queries to STDOUT as well
-app.use(knexLogger(knex));
+// SESSIONS
+app.use(methodOverride("_method"));
+app.use(session({
+    name:              "supercardgame.sid",
+    secret:            "sky is falling", // TODO: Replace with environment variable
+    maxAge:            2 * 24 * 60 * 60 * 1000,
+    resave:            true,
+    saveUninitialized: false,
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    })
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
+// MISC
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use("/styles", sass({
-    src: `${__dirname  }/styles`,
-    dest: `${__dirname  }/public/styles`,
+    src: `${__dirname}/styles`,
+    dest: `${__dirname}/public/styles`,
     debug: true,
     outputStyle: "expanded"
 }));
 app.use(express.static("public"));
 
-// Mount all resource routes
-app.use("/api/users", usersRoutes(knex));
 
-// Home page
-app.get("/", (req, res) => {
-    res.render("index");
-});
+// Mount all resource routes
+app.use("/users", require("./routes/users")(passport));
+app.use("/api/games", require("./routes/games")(passport));
+app.use("/", require("./routes/home")(passport));
 
 app.listen(PORT, () => {
-    console.log(`Example app listening on port ${  PORT}`);
+    console.log(`Example app listening on port ${PORT}`);
 });
 
-module.exports = {
-    knex
-};

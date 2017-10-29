@@ -1,4 +1,6 @@
-const { knex } = require("./../server");
+//const knexConfig = require("./../knexfile");
+const ENV = process.env.ENV || "development";
+//const knex = require("knex")(knexConfig[ENV]);
 const pluralize = require("pluralize");
 
 class Model {
@@ -11,19 +13,26 @@ class Model {
      * @memberof Model
      */
     static findOne(query) {
-        if (typeof query === "object") {
-            return knex(this.tableName)
-                .first()
-                .where(query)
-                .then(row => Object.assign(new this(), row));
-        } else if (typeof query === "number") {
-            return knex(this.tableName)
-                .first()
-                .where("id", query)
-                .then(row => Object.assign(new this(), row));
-        } else {
-            throw Error("Incorrect input. Only objects or numbers.");
+        if (typeof query === "string") {
+            query = Number(query);
         }
+
+        if (isNaN(query) || (typeof query !== "number" && typeof query !== "object")) {
+            throw Error("Incorrect input. Only objects or numbers.");
+        } else if (typeof query === "number") {
+            query = { id: query };
+        }
+
+        return knex(this.tableName)
+            .first()
+            .where(query)
+            .then(row => {
+                if (row) {
+                    return Object.assign(new this(), row);
+                } else {
+                    return null;
+                }
+            });
     }
 
     /**
@@ -38,14 +47,24 @@ class Model {
             return knex(this.tableName)
                 .select()
                 .where(query)
-                .map(row => Object.assign(new this(), row));
-        } else if (typeof query === "number") {
+                .then(rows => {
+                    if (rows.length > 0) {
+                        return rows.map(row => Object.assign(new this(), row));
+                    } else {
+                        return [];
+                    }
+                });
+        } else {
             return knex(this.tableName)
                 .select()
-                .where("id", query)
-                .map(row => Object.assign(new this(), row));
-        } else {
-            throw Error("Incorrect input. Only objects or numbers.");
+                .whereRaw(query)
+                .then(rows => {
+                    if (rows.length > 0) {
+                        return rows.map(row => Object.assign(new this(), row));
+                    } else {
+                        return [];
+                    }
+                });
         }
     }
 
@@ -60,15 +79,19 @@ class Model {
     /**
      * Insert new row in db or updates fields in existing row
      */
-    save() {
+    get save() {
         if (this.id) {
             return knex(this.constructor.tableName)
                 .where("id", this.id)
-                .update(this, "id");
+                .update(this, "id")
+                .then(() => Promise.resolve(this.id));
         } else {
             return knex(this.constructor.tableName)
                 .insert(this, "id")
-                .then(id => this.id = id[0]);
+                .then(id => {
+                    this.id = id[0];
+                    return Promise.resolve(this.id);
+                });
         }
     }
 

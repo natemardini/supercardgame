@@ -1,70 +1,79 @@
+require("dotenv").config();
 
 const should = require("chai").should();
-const Game = require("../../models/game");
+const Game = require("../../models/games");
+const User = require("../../models/users");
+const mongoose = require("mongoose");
+
+
 
 describe("Model Game's", () => {
 
-    const testGame = Game.create(1, {
-        player1: [
-            1, 5, 7, 52
-        ],
-        player2: [
-            6, 3, 2, 51
-        ],
-        prize: [
-            10, 11, 12, 45
-        ]
+    beforeEach((done) => {
+        if (mongoose.connection.db) return done();
+        mongoose.connect(process.env.MONGODB_URI, {
+            useMongoClient: true
+        }, done);
     });
+
+    const testGame = new Game({ gameType: 1 });
 
     it("save() should return the object ID", (done) => {
-        testGame.save().then(() => {
-            testGame.id.should.be.a("number");
+        testGame.save((err, game) => {
+            if (err) throw err;
+            game._id.should.be.a("object");
             done();
         });
     });
 
-    it("findOne() should return a valid object", (done) => {
-        Game.findOne(testGame.id).then(game => {
-            game.should.be.an.instanceOf(Game);
-            game.game_type.should.be.a("number");
-            done();
+    it("addPlayer() should return add player to game", (done) => {
+        User.findOne({ handle: "Johnny" }).then((user) => {
+            testGame.addPlayer(user, () => {
+                testGame.addPlayer(user, done);
+            });
         });
     });
 
-    it("save() on same Game should return the same object ID", (done) => {
-        testGame.gameType = 2;
-        const currentId = testGame.id;
-        testGame.save()
-            .then(() => Game.findOne(currentId))
-            .then(dbGame => {
-                dbGame.id.should.equal(currentId);
-                dbGame.should.be.an.instanceOf(Game);
-                dbGame.gameType.should.equal(2);
-                dbGame.deck.should.be.an("object");
-                dbGame.deck.prize.should.be.an("array");
-                dbGame.deck.prize[1].should.be.equal(11);
+    it("addPlayer() should return add player to game", (done) => {
+        Game.findById(testGame._id).then((game) => {
+            game.setup();
+            game.save().then((game) => {
+                game.deck.should.be.an("object");
                 done();
             });
-    });
-
-    it("findAll() should return a result object", (done) => {
-        Game.findAll({}).then(result => {
-            result.should.be.an("array");
-            result[0].should.be.an.instanceOf(Game);
-            done();
         });
     });
 
-    it("destroy() should delete the object", (done) => {
-        testGame.destroy().then(result => {
-            result.should.equal(1);
-            done();
+    it("advanceRound() should change active player and advance round", (done) => {
+        Game.findById(testGame._id).then((game) => {
+            const currentRound = game.round;
+            game.advanceRound();
+            const nextPlayer = game.players.filter(p => p.active === true)[0];
+            nextPlayer.should.be.an("object");
+            game.round.should.equal(currentRound + 1);
+            game.advanceRound();
+            const furtherPlayer = game.players.filter(p => p.active === true)[0];
+            furtherPlayer._id.should.not.equal(nextPlayer._id);
+            game.round.should.equal(currentRound + 2);
+            game.save((err) => {
+                if (err) console.log(err);
+                done();
+            });
         });
     });
 
-    after((done) => {
-        process.exit();
-        done();
+    it("computeRound() should change active player and advance round", (done) => {
+        Game.findById(testGame._id).then((game) => {
+            const player1 = game.players[0];
+
+            const input = {
+                prizeCard: game.deck.prize[3],
+                bidCard: player1.hand[2]
+            };
+
+            game.computeRound(player1.userId, input);
+            done();
+        });
     });
 });
 

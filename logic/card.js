@@ -9,42 +9,60 @@ class Deck {
         return ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
     }
 
-    constructor(opts = {}) {
-        // Default options
-        opts.suits        = opts.suits || Deck.suits;
-        opts.cardsPerSuit = Math.min((opts.cardsPerSuit || 13), 13);
-        opts.size         = opts.size || opts.suits.length * opts.cardsPerSuit;
-        opts.decks        = opts.decks || 1;
-        opts.extraPiles   = opts.extraPiles || [];
-
-        // Create Deck ID
-        this._createDeckID();
-
-        // Create Piles
-        this.cards = [];
-        this.discards = [];
-        opts.extraPiles.forEach(pile => this[pile] = []);
-
-        // Add cards to deck
-        this.addFullDecks(opts.decks, opts.maxSuitSize, opts.suits);
-
-        if (this.cards.length < opts.size) {
-            this.addExtraCards(opts.size - this.cards.length, opts.suits);
+    static score(value) {
+        if (!isNaN(Number(value))) {
+            return Number(value);
+        } else {
+            switch (value) {
+            case "A":
+                return 1;
+            case "J":
+                return 11;
+            case "Q":
+                return 12;
+            case "K":
+                return 13;
+            default:
+                return 0;
+            }
         }
-
-        this.cards = _.sampleSize(this.cards, opts.size);
     }
 
-    addFullDecks(amountDecks = 1, maxSuitSize = 13, suits = Deck.suits) {
+    static create(opts = {}) {
+        const _deck = new Deck();
+        _deck._createDeckID();
+
+        opts.suits = opts.suits || Deck.suits;
+        opts.cardsPerSuit = Math.min((opts.cardsPerSuit || 13), 13);
+        opts.size = opts.size || opts.suits.length * opts.cardsPerSuit;
+        opts.decks = opts.decks || 1;
+        opts.extraPiles = opts.extraPiles || [];
+
+        _deck.cards = [];
+        _deck.discards = [];
+        opts.extraPiles.forEach(pile => _deck[pile] = []);
+
+        _deck._addFullDecks(opts.decks, opts.maxSuitSize, opts.suits);
+
+        if (_deck.cards.length < opts.size) {
+            _deck.addExtraCards(opts.size - _deck.cards.length, opts.suits);
+        }
+
+        _deck.cards = _.sampleSize(_deck.cards, opts.size);
+
+        return _deck;
+    }
+
+    _addFullDecks(amountDecks = 1, maxSuitSize = 13, suits = Deck.suits) {
         for (let i = 0; i < amountDecks; i++) {
             suits.forEach(suit => {
-                const series = this.addCardsInSuitSeries(suit, maxSuitSize);
+                const series = this._addCardsInSuitSeries(suit, maxSuitSize);
                 this.cards.push(...series);
             });
         }
     }
 
-    addCardsInSuitSeries(suit, max) {
+    _addCardsInSuitSeries(suit, max) {
         const result = [];
 
         for (let i = 0; i < max; i++) {
@@ -69,6 +87,7 @@ class Deck {
         return {
             suit,
             value,
+            valueN: Deck.score(value),
             deck: this.id
         };
     }
@@ -87,30 +106,33 @@ class Deck {
         this.cards = _.shuffle(this.cards);
     }
 
-    giveCards(cards, suit = "") {
+    static shuffle(cards) {
+        return _.shuffle(cards);
+    }
+
+    giveCards(amount = this.cards.length, suit = "") {
         let _arr = [];
 
-        if (suit) {
+        if (suit === "random") {
+            suit = _.sample(_.uniq(this.cards.map(c => c.suit)));
+            _arr = this.cards.filter(c => c.suit === suit);
+        } else if (suit) {
             _arr = this.cards.filter(c => c.suit === suit);
         } else {
             _arr = this.cards;
         }
 
-        cards = Math.min(cards, _arr.length);
-        const hand = _.sampleSize(_arr, cards);
+        amount = Math.min(amount, _arr.length);
+        const hand = _.sampleSize(_arr, amount);
         _.pullAll(this.cards, hand);
 
         return hand;
     }
 
     static returnCard(transfer) {
-        if (transfer.card.deck === transfer.to.id) {
-            _.pull(transfer.from, transfer.card);
-            transfer.to[transfer.pile].push(transfer.card);
-            return true;
-        } else {
-            return false;
-        }
+        _.pull(transfer.from, transfer.card);
+        transfer.to[transfer.pile].push(transfer.card);
+        return true;
     }
 
     static _validate(suit, value) {

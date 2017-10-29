@@ -1,0 +1,21 @@
+main {
+    width: 50%;
+    margin: 0 auto;
+    div {
+        margin: 50px auto;
+
+        &#scoreboard {
+            background-color: #5ad75a;
+            color: white;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 200%;
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+    }
+
+
+}
+

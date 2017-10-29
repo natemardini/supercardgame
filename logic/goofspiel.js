@@ -1,24 +1,29 @@
+const _ = require("lodash");
+const { Deck } = require("./../logic/card");
+
+
+
 /**
  * function: create an array of 13 elements
  */
-function createSuit () {
-    const suit = [];
-    for (let i = 1; i <= 13; i++) {
-        suit.push(i);
-    }
-    return suit;
-}
+// function createSuit () {
+//     const suit = [];
+//     for (let i = 1; i <= 13; i++) {
+//         suit.push(i);
+//     }
+//     return suit;
+// }
 
 /**
  * function: shuffle an array
  */
-function shuffle (input) {
-    for (let i = input.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [input[i], input[j]] = [input[j], input[i]];
-    }
-    return input;
-}
+// function shuffle (input) {
+//     for (let i = input.length - 1; i > 0; i--) {
+//         const j = Math.floor(Math.random() * (i + 1));
+//         [input[i], input[j]] = [input[j], input[i]];
+//     }
+//     return input;
+// }
 
 
 // let prizes = createSuit();  // from Game -> cards_in_play
@@ -55,60 +60,141 @@ function shuffle (input) {
     user1card: 10,
     user2card: 8 }
  */
-function startGame(input) {
-    let i = input.round;
-    let user1Score = input.user1score;
-    let user2Score = input.user2score;
-    let user1Win = input.user1win;
-    let user2Win = input.user2win;
-    let prize = input.prize;
-    let user1Card = input.user1card;
-    let user2Card = input.user2card;
+function calculate(game, user, input) {
 
-    if (user1Win || user2Win) {
-        return 0; //game already finished!
-    }
-    else if (i === 13) {                 // last round of the game, compare final scores
-        if (user1Score > user2Score) {
-            user1Win = 1;   //game finished, user1 win
-        }
-        else if (user1Score < user2Score) {
-            user2Win = 1;   //game finished, user2 win
-        }
-        else {} //game finished, Tie!
+    if (game.status === 3) {
+        return game;
     }
 
-    // if a user's score is > 45.5, win the game
-    else if (user1Score > user2Score && user1Score >= 45.5) {
-        user1Win = 1;       //game finished,  user1 win
-    }
-    else if (user2Score > user1Score && user2Score >= 45.5) {
-        user2Win = 1;      //game finished, user2 win
+    const { bidCard, prizeCard } = input;
+
+    placeBid(user, game, bidCard);
+    checkBids(game, prizeCard);
+
+    let winner = null;
+
+    if (game.round === 13) {
+        winner = checkScores(game, true);
+    } else {
+        winner = checkScores(game);
     }
 
-    else {
-        if (user1Card > user2Card) {
-            user1Score += prize;
-        }
-        else if (user1Card < user2Card) {
-            user2Score += prize;
-        }
-        else {}  // console.log(`TIE this round!`);
-
-        if (user1Score > user2Score && user1Score >= 45.5) {
-            user1Win = 1;
-        }
-        else if (user2Score > user1Score && user2Score >= 45.5) {
-            user2Win = 1;
-        }
-        else {}
-    }
-    return { user1score: user1Score,
-            user2score: user2Score,
-            user1win: user1Win,
-            user2win: user2Win };
+    return [game, winner];
 }
-module.exports = { startGame: startGame };
+
+
+//     // if a user's score is > 45.5, win the game
+//     else if (player1.score > player2.score && player1.score >= 45.5) {
+//         player1.win = true;       //game finished,  user1 win
+//     }
+//     else if (player2.score > player1.score && player2.score >= 45.5) {
+//         player2.win = true;      //game finished, user2 win
+//     }
+
+//     else {
+//         if (user1Card > user2Card) {
+//             user1Score += prize;
+//         }
+//         else if (user1Card < user2Card) {
+//             user2Score += prize;
+//         }
+//         else {}  // console.log(`TIE this round!`);
+
+//         if (user1Score > user2Score && user1Score >= 45.5) {
+//             user1Win = 1;
+//         }
+//         else if (user2Score > user1Score && user2Score >= 45.5) {
+//             user2Win = 1;
+//         }
+//         else {}
+//     }
+
+//     return { user1score: user1Score,
+//         user2score: user2Score,
+//         user1win: user1Win,
+//         user2win: user2Win };
+// }
+
+function checkBids(game, prize) {
+    prize = _.find(game.deck.prize, { valueN: prize.value, suit: prize.suit });
+
+    const currentBids = game.players.reduce((a, p) => a += p.bid.length, 0);
+
+    if (currentBids % game.players.length === 0) {
+
+        const tally = new Map();
+
+        game.players.forEach((p, i) => {
+            const points = p.bid.reduce((acc, bid) => {
+                return acc + bid.valueN;
+            }, 0); // fixme
+            tally.set(i, points);
+        });
+
+        let check = [...new Set(tally.values())];
+
+        if (tally.size === check.length) {
+            const highBid = Math.max(...check);
+            const winKey = _.find(Array.from(tally), e => e[1] === highBid)[0];
+            game.players[winKey].score += prize.valueN;
+            cleanUp(game, prize);
+        }
+
+        game.advanceRound();
+    }
+}
+
+function checkScores(game, final = false) {
+
+    let highestScore = 0;
+    let winner       = null;
+
+    game.players.forEach(p => {
+        if (p.score > highestScore) {
+            highestScore = p.score;
+            if (final || p.score > 45.5) {
+                winner = p;
+            }
+        }
+    });
+
+    if (winner) winner.win = true;
+
+    return winner;
+}
+
+function cleanUp(game, prize) {
+    game.players.forEach(p => {
+        p.bid.forEach(c => {
+            Deck.returnCard({
+                from: p.bid,
+                to: game.deck,
+                pile: "discards",
+                card: c
+            });
+        });
+    });
+
+    Deck.returnCard({
+        from: game.deck.prize,
+        to: game.deck,
+        pile: "discards",
+        card: prize
+    });
+}
+
+function placeBid(user, game, bid) {
+    //const currentPlayer = _.find(game.players, { "userId": ObjectId(user) });
+    const currentPlayer = _.find(game.players, { "userId": user._id });
+    const bidCard = _.find(currentPlayer.hand, { valueN: bid.value, suit: bid.suit });
+
+    _.pull(currentPlayer.hand, bidCard);
+    currentPlayer.bid.push(bidCard);
+    currentPlayer.atRound = game.round + 1;
+}
+
+
+module.exports = calculate;
 
 
 
