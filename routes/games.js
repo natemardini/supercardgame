@@ -22,7 +22,7 @@ module.exports = (passport) => {
     * GET /api/games
     */
     router.get("/pending", passport.restricted, (req, res) => {
-        Game.find({ status: 1 }).populate("players.userId", "handle").then(games => {
+        Game.find({ status: 1 }).populate({ path: "players.userId", select: "handle" }).then(games => {
             res.json(games);
         }).catch(e => res.json(e));
     });
@@ -71,10 +71,9 @@ module.exports = (passport) => {
     /**
      * POST /api/games/[id]
      */
-    router.post("/:id", (req, res) => {
-        const userID = "59f3c6e0ff0285431851b6f5"; // hard coded for testing
+    router.post("/:id", passport.restricted, (req, res) => {
         Game.findById(req.params.id).then(game => {
-            game.computeRound(userID, req.body);
+            game.computeRound(req.user, req.body);
             res.json(game);
         }).catch(e => res.status(500).json(e));
     });
