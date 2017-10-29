@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     handle:      String,
     email:       String,
+    ranking:     { type: Number, default: 1000 },
     password:    String,
     activeGames: [{ type: Schema.Types.ObjectId, ref: "Game" }],
     pastGames:   [{ type: Schema.Types.ObjectId, ref: "Game" }]

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { Deck } = require("../logic/card");
+const EloRank = require("elo-rank");
 const _ = require("lodash");
 
 // SCHEMAS
@@ -149,6 +150,30 @@ gameSchema.methods.checkStartRequirements = function () {
         return false;
     }
 };
+
+gameSchema.methods.rankPlayers = function (cb) {
+    const elo = new EloRank();
+
+    this.populate("players.userId", (err) => {
+        if (err) throw err;
+
+        const winner = _.find(this.players, "win");
+        const loser = _.find(this.players, { win: false });
+
+        const expectedScoreW = elo.getExpected(winner.userId.ranking, loser.userId.ranking);
+        const expectedScoreL = elo.getExpected(loser.userId.ranking, winner.userId.ranking);
+
+        winner.userId.ranking = elo.updateRating(expectedScoreW, 1, winner.userId.ranking);
+        loser.userId.ranking = elo.updateRating(expectedScoreL, 0, loser.userId.ranking);
+
+        Promise.all([
+            winner.userId.save(),
+            loser.userId.save()
+        ]).then(cb)
+        .catch(e => console.log(e));
+    });
+};
+
 
 const Player = mongoose.model("Player", playerSchema);
 module.exports = mongoose.model("Game", gameSchema);
