@@ -72,9 +72,9 @@ function calculate(game, user, input) {
     checkBids(game, prizeCard);
 
     if (game.round === 13) {
-        checkScores(game, true);
+        const winner = checkScores(game, true);
     } else {
-        checkScores(game);
+        const winner = checkScores(game);
     }
 
     return game;
@@ -114,6 +114,7 @@ function calculate(game, user, input) {
 // }
 
 function checkBids(game, prize) {
+    prize = _.find(game.deck.prize, { valueN: prize.value, suit: prize.suit });
 
     const currentBids = game.players.reduce((a, p) => a += p.bid.length, 0);
 
@@ -178,12 +179,11 @@ function cleanUp(game, prize) {
 
 function placeBid(user, game, bid) {
     //const currentPlayer = _.find(game.players, { "userId": ObjectId(user) });
-    const currentPlayer = game.players.filter(p => {
-        return p.userId.toString() === user;
-    })[0];
+    const currentPlayer = _.find(game.players, ["userId", user.id]);
+    const bidCard = _.find(currentPlayer.hand, { valueN: bid.value, suit: bid.suit });
 
-    _.pull(currentPlayer.hand, bid);
-    currentPlayer.bid.push(bid);
+    _.pull(currentPlayer.hand, bidCard);
+    currentPlayer.bid.push(bidCard);
     currentPlayer.atRound = game.round + 1;
 }
 

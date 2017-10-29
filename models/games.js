@@ -127,14 +127,37 @@ gameSchema.methods.setup = function () {
 };
 
 gameSchema.methods.computeRound = function (user, input) {
+    let game, winner;
+
     switch (this.gameType) {
     case 1:
-        require("./../logic/goofspiel")(this, user, input);
-        return;
+        [game, winner] = require("./../logic/goofspiel")(this, user, input);
+        break;
 
     default:
-        return;
+        break;
     }
+
+    if (winner) {
+        game.endGame();
+    }
+};
+
+gameSchema.methods.endGame = function () {
+    this.populate("userId", (err, game) => {
+        const players = [];
+
+        game.players.forEach(p => {
+            const game = p.activeGames.filter(g => g === game._id)[0];
+            _.pull(p.activeGames, game);
+            p.pastGames.push(game);
+            players.push(p);
+        });
+
+        game.status = 3;
+
+        return Promise.all([...players.save(), game.save()]);
+    });
 };
 
 gameSchema.statics.findMatch = function (user, gameType, cb) {
@@ -199,7 +222,7 @@ gameSchema.methods.rankPlayers = function (cb) {
             winner.userId.save(),
             loser.userId.save()
         ]).then(cb)
-        .catch(e => console.log(e));
+            .catch(e => console.log(e));
     });
 };
 
