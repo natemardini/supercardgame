@@ -11,13 +11,25 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
         crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/cb2ce4e278.js"></script>
     <script src="/scripts/lobby.js"></script>
 </head>
 
 <body>
     <main>
-        <div>
-            SCOREBOARD
+        <div id="scoreboard">
+            <span class="player-rating" title="ELO Ranking">
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <span><%= ranking %></span>
+            </span>
+            <span class="player-wins" title="Wins">
+                <i class="fa fa-chevron-circle-up" aria-hidden="true"></i>
+                <span><%= wins %></span>
+            </span>
+            <span class="player-defeats" title="Defeats">
+                <i class="fa fa-chevron-circle-down" aria-hidden="true"></i>
+                <span><%= losses %></span>
+            </span>
         </div>
         <div>
         <table id="active-game-list" class="table table-hover table-sm">

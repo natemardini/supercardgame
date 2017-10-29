@@ -4,8 +4,40 @@ $(document).ready(function () {
     $("button#create-new-game").click(createGame);
     $("button#find-random-game").click(findGame);
     $("table#pending-game-list").on("click", ".join-game", joinGame);
+    $("table#active-game-list").on("click", ".play-game", playGame);
 });
 
+/** */
+function playGame(e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const $row = $(this).closest("tr");
+    const gameId = $row.data("game-id");
+
+    $row.hide();
+    window.location = `/game/show?gameID=${gameId}`;
+
+    // $.ajax({
+    //     url: "/api/games/join",
+    //     method: "PUT",
+    //     data: {
+    //         id: gameId
+    //     },
+    //     success: function (data) {
+    //         alert("Game found!");
+    //         console.log(data);
+    //         // let gameID = data._id;
+    //         console.log(gameId);
+    //         window.location = `/game/show?gameID=${gameId}`;
+    //         $row.hide();
+    //     }
+    // });
+}
+
+
+
+/** */
 function joinGame(e) {
     e.stopPropagation();
     e.preventDefault();
@@ -19,7 +51,12 @@ function joinGame(e) {
         data: {
             id: gameId
         },
-        success: function () {
+        success: function (data) {
+            alert("Game found!");
+            console.log(data);
+            // let gameID = data._id;
+            console.log(gameId);
+            window.location = `/game/show?gameID=${gameId}`;
             $row.hide();
         }
     });
