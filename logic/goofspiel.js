@@ -184,6 +184,7 @@ function placeBid(user, game, bid) {
 
     _.pull(currentPlayer.hand, bid);
     currentPlayer.bid.push(bid);
+    currentPlayer.atRound = game.round + 1;
 }
 
 

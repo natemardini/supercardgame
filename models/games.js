@@ -22,6 +22,7 @@ const playerSchema = new Schema({
     win: Boolean,
     bid: [cardSchema],
     score: Number,
+    atRound: Number,
     hand: [cardSchema]
 });
 
@@ -112,6 +113,7 @@ gameSchema.methods.setup = function () {
             player.win = false;
             player.playerNo = index + 1;
             player.bid = [];
+            player.atRound = 1;
         });
         this.deck.discards = deck.giveCards();
         break;

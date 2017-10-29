@@ -8,13 +8,15 @@ module.exports = (passport) => {
     /**
      * GET /api/games
      */
-    router.get("/",
-        (req, res) => {
-            Game.findAll({}).then(games => {
-                res.json(games);
-            });
-        }
-    );
+    router.get("/", passport.restricted, (req, res) => {
+        req.user.populate({ path: "activeGames", select: "-deck" }, (err, user) => {
+            const data = {
+                currentPlayer: req.user.id,
+                activeGames: user.activeGames
+            };
+            res.json(data);
+        });
+    });
 
     /**
     * GET /api/games
@@ -77,6 +79,19 @@ module.exports = (passport) => {
         }).catch(e => res.status(500).json(e));
     });
 
+
+    /**
+    * GET /api/games/[id]
+    */
+    router.get("/:id", passport.restricted, (req, res) => {
+        Game.findById(req.params.id).then(game => {
+            const data = {
+                player: req.user.id,
+                game
+            };
+            res.json(data);
+        }).catch(e => res.status(500).json(e));
+    });
 
 
     /**
