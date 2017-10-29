@@ -77,7 +77,11 @@ function findGame(e) {
             type: 1
         },
         success: function (data) {
+            alert("Game found!");
             console.log(data);
+            let gameID = data._id;
+            console.log(gameID);
+            window.location = `/html?gameID=${gameID}`;
         }
     });
 }

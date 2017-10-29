@@ -5,11 +5,11 @@ let prizeCard = {};
  * This function pulls in the game data then 'deals' the cards.
  *
  */
-function initializeGame(){
+function initializeGame(gameID){
     $("#Start").click(function() {
         $( ".card" ).remove(); // remove all the cards on the screen and start a new game
     // Get json object for game 201 (hard-coded for now).
-        $.getJSON("http://localhost:8080/api/games/59f55699bd50cb6a3f04900a", function(data) {
+        $.getJSON(`http://localhost:8080/api/games/${gameID}`, function(data) {
 
         // Initial position for Player1 hand.
         let x = -500;
