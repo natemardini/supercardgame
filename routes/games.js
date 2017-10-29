@@ -42,12 +42,24 @@ module.exports = (passport) => {
     });
 
     /**
-     * GET /api/games/[id]
+     * PUT /api/games/match
      */
     router.put("/match", passport.restricted, (req, res) => {
         Game.findMatch(req.user, req.body.type, (err, game) => {
             if (err) throw err;
             res.json(game);
+        });
+    });
+
+    /**
+    *  POST /api/games/[id]
+    */
+    router.put("/join", passport.restricted, (req, res) => {
+        Game.findById(req.body.id).then(game => {
+            game.addPlayer(req.user, (err, game) => {
+                if (err) throw err;
+                res.sendStatus(200);
+            });
         });
     });
 
@@ -61,6 +73,8 @@ module.exports = (passport) => {
             res.json(game);
         }).catch(e => res.status(500).json(e));
     });
+
+
 
     /**
      * DELETE /api/games/[id]
