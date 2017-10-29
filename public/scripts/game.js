@@ -1,7 +1,9 @@
-console.log(window.location.split("/").reverse()[0]);
+// console.log(window.location.split("/").reverse()[0]);
+console.log(window.location.search.substr(-24));
+
 $(document).ready(function () {
     // REMOVE THIS and replace with call event on click.
-    initializeGame(window.location.split("/").reverse()[0]);
+    initializeGame(window.location.search.substr(-24));
 });
 
 
