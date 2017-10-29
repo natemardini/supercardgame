@@ -127,16 +127,9 @@ function createElement(type) {
     return document.createElement(type);
 }
 
-/**
- *
- *
- * @param {any} target
- * @param {any} name
- * @param {any} listener
- */
-function addListener(target, name, listener) {
-    target.addEventListener(name, listener);
-}
+// function addListener(target, name, listener) {
+//     target.addEventListener(name, listener);
+// }
 
 /**
  *
