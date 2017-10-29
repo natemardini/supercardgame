@@ -59,7 +59,9 @@ module.exports = (passport) => {
     * GET /api/users/[id]
     */
     router.get("/lobby", passport.restricted, (req, res) => {
-        res.render("users/lobby");
+        req.user.getRanking((err, ranking) => {
+            res.render("users/lobby", ranking);
+        });
     });
 
     /**
