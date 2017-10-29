@@ -129,7 +129,7 @@ function findGame(e) {
             console.log(data);
             let gameID = data._id;
             console.log(gameID);
-            window.location = `/html?gameID=${gameID}`;
+            window.location = `/game/show?gameID=${gameID}`;
         }
     });
 }
