@@ -42,9 +42,11 @@ const gameSchema = new Schema({
 // GAME METHODS
 gameSchema.pre("save", function (next) {
     if (this.isNew) {
+        this.status = Number(this.status);
         this.round = 1;
         this.status = 1;
     }
+    this.status === 1 && this.checkStartRequirements() && this.setup();
     next();
 });
 
@@ -113,6 +115,8 @@ gameSchema.methods.setup = function () {
     default:
         break;
     }
+
+    this.status = 2;
 };
 
 gameSchema.methods.computeRound = function (user, input) {
@@ -123,6 +127,22 @@ gameSchema.methods.computeRound = function (user, input) {
 
     default:
         return;
+    }
+};
+
+gameSchema.statics.findMatch = function (user, gameType, cb) {
+    this.find({ status: 1, gameType }).then(games => {
+        const game = _.sample(games);
+        game.addPlayer(user, cb);
+    });
+};
+
+gameSchema.methods.checkStartRequirements = function () {
+    switch (this.gameType) {
+    case 1:
+        return this.players.length === 2;
+    default:
+        return false;
     }
 };
 
