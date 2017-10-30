@@ -9,10 +9,16 @@
         <a class="nav-link logout-link" href="">Logout</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Match History</a>
+        <a class="nav-link login-link" href="/users/login">Login</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Ladder</a>
+        <a class="nav-link register-link" href="/users/register">Register</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link match-history" href="#">Match History</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link ladder" href="#">Ladder</a>
       </li>
     </ul>
   </div>
@@ -32,5 +38,19 @@ $(document).ready(function() {
             }
         })
     })
+
+    const location = window.location.pathname.split("/").reverse()[0];
+
+    if (location === "login" || location === "register") {
+        $(".logout-link").closest("li").hide();
+        $(".match-history").closest("li").hide();
+        $(".login-link").closest("li").show();
+        $(".register-link").closest("li").show();
+    } else {
+        $(".logout-link").closest("li").show();
+        $(".match-history").closest("li").show();
+        $(".login-link").closest("li").hide();
+        $(".register-link").closest("li").hide();
+    }
 })
 </script>

@@ -32,6 +32,27 @@ main {
 
         }
     }
+
+    form.auth-form {
+        margin: 20px auto;
+
+        table {
+            position: relative;
+            margin: 0 auto;
+
+            input {
+                margin-left: 10px;
+            }
+
+            td.\.form-submit-button {
+                text-align: center;
+
+            }
+
+
+
+        }
+    }
 }
 
 body {
