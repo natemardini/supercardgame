@@ -53,7 +53,9 @@ userSchema.methods.getHistory = function (cb) {
         if (err) cb(err);
 
         user.pastGames.forEach(function (game) {
-            const player = _.find(game.players, ["userId._id", user._id]);
+            const player = game.players.filter(p => {
+                return p.userId._id === user._id;
+            })[0];
 
             ranking.push({
                 gameId: game.id,
