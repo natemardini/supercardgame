@@ -2,6 +2,9 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/users");
 
+/**
+ *  Basic Passport local strategy setup
+ */
 passport.use(new LocalStrategy({ usernameField: "handle" },
     (username, password, done) => {
         User.findOne({ handle: username }).then(user => {
@@ -27,6 +30,10 @@ passport.deserializeUser(function (id, cb) {
     });
 });
 
+/**
+ * Custom router middleware to divert
+ * unauthenticated users to login page
+ */
 passport.restricted = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();

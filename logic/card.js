@@ -28,9 +28,17 @@ class Deck {
         }
     }
 
+    /**
+     * Creates a deck of cards based on the opts provided. If no opts defined,
+     * generates a standard deck of 52 cards including all 4 suits.
+     *
+     * @static
+     * @param {any} [opts={suits, size, cardsPerSuit, decks, extraPiles}]
+     * @returns {Deck}
+     * @memberof Deck
+     */
     static create(opts = {}) {
         const _deck = new Deck();
-        //_deck._createDeckID();
 
         opts.suits = opts.suits || Deck.suits;
         opts.cardsPerSuit = Math.min((opts.cardsPerSuit || 13), 13);
@@ -53,6 +61,14 @@ class Deck {
         return _deck;
     }
 
+    /**
+     * Adds a full standard deck of 52 cards to Deck.cards
+     *
+     * @param {number} [amountDecks=1]
+     * @param {number} [maxSuitSize=13]
+     * @param {any} [suits=Deck.suits]
+     * @memberof Deck
+     */
     _addFullDecks(amountDecks = 1, maxSuitSize = 13, suits = Deck.suits) {
         for (let i = 0; i < amountDecks; i++) {
             suits.forEach(suit => {
@@ -62,6 +78,14 @@ class Deck {
         }
     }
 
+    /**
+     * Returns new cards of a specific suit
+     *
+     * @param {any} suit
+     * @param {any} max
+     * @returns {array} Card objects
+     * @memberof Deck
+     */
     _addCardsInSuitSeries(suit, max) {
         const result = [];
 
@@ -72,12 +96,28 @@ class Deck {
         return result;
     }
 
+    /**
+     * Add additional cards as needed to Deck.cards
+     *
+     * @param {any} amount
+     * @param {any} suits
+     * @memberof Deck
+     */
     addExtraCards(amount, suits) {
         for (let i = 0; i < amount; i++) {
             this.cards.push(this.newCard(_.sample(suits)));
         }
     }
 
+    /**
+     * Creates a new card of a particular suit and value, otherwise
+     * randomly generates both
+     *
+     * @param {any} suit
+     * @param {any} value
+     * @returns {object} Card
+     * @memberof Deck
+     */
     newCard(suit, value) {
         suit = suit || _.sample(Deck.suits);
         value = value || _.sample(Deck.values);
@@ -91,6 +131,12 @@ class Deck {
         };
     }
 
+    /**
+     * Adds Joker cards to Deck.cards as needed
+     *
+     * @param {any} amount
+     * @memberof Deck
+     */
     addJokers(amount) {
         for (let i = 0; i < amount; i++) {
             this.cards.push({
@@ -109,6 +155,15 @@ class Deck {
         return _.shuffle(cards);
     }
 
+    /**
+     * Returns specific cards and removes them from the deck (i.e. to hand to
+     * a player)
+     *
+     * @param {any} [amount=this.cards.length]
+     * @param {string} [suit=""]
+     * @returns {array} Cards
+     * @memberof Deck
+     */
     giveCards(amount = this.cards.length, suit = "") {
         let _arr = [];
 
@@ -128,12 +183,30 @@ class Deck {
         return hand;
     }
 
+    /**
+     * Returns a card back to the deck or a particular pile
+     * FIXME: Not compatible with MongoDB
+     *
+     * @static
+     * @param {any} transfer
+     * @returns {boolean}
+     * @memberof Deck
+     */
     static returnCard(transfer) {
         _.pull(transfer.from, transfer.card);
         transfer.to[transfer.pile].push(transfer.card);
         return true;
     }
 
+    /**
+     * Validates that a card suit/value is allowed
+     *
+     * @static
+     * @param {any} suit
+     * @param {any} value
+     * @returns {array} Suit/Value
+     * @memberof Deck
+     */
     static _validate(suit, value) {
         if (!this.suits.includes(suit)) {
             suit = null;
@@ -167,11 +240,6 @@ class Deck {
         } else {
             return [suit, value];
         }
-    }
-
-    _createDeckID(a, b) {
-        for (b = a = ""; a++ < 36; b += a * 51 & 52 ? (a ^ 15 ? 8 ^ Math.random() * (a ^ 20 ? 16 : 4) : 4).toString(16) : "-");
-        this.id = b;
     }
 }
 
