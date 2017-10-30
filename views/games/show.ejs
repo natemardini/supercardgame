@@ -36,34 +36,6 @@
         </nav>
         <!-- contain the cards -->
     <div id="container"></div>
-        <script>
-        $(document).ready(function() {
-            $("#Logout").click(function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                $.ajax({
-                    url: "/users/logout",
-                    method: "Delete",
-                    success: function() {
-                        window.location = "/users/login";
-                    }
-                })
-            })
-
-            $("#Lobby").click(function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                window.location = "/users/lobby";
-            })
-
-            $("#Goodfspiel").click(function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-
-                window.location = "/users/lobby";
-            })
-        })
-        </script>
     </body>
 </html>
 

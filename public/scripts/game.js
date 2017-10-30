@@ -1,7 +1,35 @@
 $(document).ready(function () {
     // Call the initialize command when the page is loaded and ready.
     initializeGame(window.location.search.substr(-24));
+
+    // jQuery on logout button
+    $("#Logout").click(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        $.ajax({
+            url: "/users/logout",
+            method: "Delete",
+            success: function() {
+                window.location = "/users/login";
+            }
+        })
+    })
+
+    // jQuery on lobby button and goodfspiel button
+    $("#Lobby").click(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        window.location = "/users/lobby";
+    })
+
+    $("#Goodfspiel").click(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        window.location = "/users/lobby";
+    })
+
 });
+
 
 let zIndex = 100;
 let prizeCard = {};
@@ -219,7 +247,7 @@ function createElement(type) {
 /**
  *
  * Display/browser related helper functions.
- * 
+ *
  */
 function check3d() {
     // I admit, this line is stealed from the great Velocity.js!
@@ -333,7 +361,7 @@ function createCard(i, suitName, rankName, x, y){
 /**
  * This function allows a comparison of two javascript objects.
  * A detailed object is returned, containing on the details on what is the same or different.
- * 
+ *
  */ Ref: https://stackoverflow.com/questions/8572826/generic-deep-diff-between-two-objects
 let deepDiffMapper = function() {
     return {
