@@ -13,6 +13,7 @@ const app            = express();
 const morgan         = require("morgan");
 const mongoose       = require("mongoose");
 const methodOverride = require("method-override");
+const path = require("path");
 
 // DATABASE
 mongoose.Promise = global.Promise;
@@ -39,6 +40,7 @@ app.use(passport.session());
 
 // MISC
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/styles", sass({

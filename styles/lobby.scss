@@ -1,6 +1,12 @@
 main {
-    width: 50%;
-    margin: 0 auto;
+    position: relative;
+    width: 55%;
+    padding: 10px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    border-radius: 5px;
+
+
     div {
         margin: 50px auto;
 
@@ -13,9 +19,14 @@ main {
             display: flex;
             justify-content: space-evenly;
         }
-
     }
 
-
 }
+
+body {
+    background-image: url(/images/cards9.jpg);
+    min-height: 100vh;
+}
+
+
 

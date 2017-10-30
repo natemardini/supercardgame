@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
         crossorigin="anonymous">
     <link rel="stylesheet" href="/styles/lobby.css" type="text/css" />
+    <link rel="stylesheet" href="/styles/nav.css" type="text/css" />
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
         crossorigin="anonymous"></script>
@@ -14,7 +15,9 @@
     <script src="https://use.fontawesome.com/cb2ce4e278.js"></script>
     <script src="/scripts/lobby.js"></script>
 </head>
-
+<header>
+<%- include ../partials/nav %>
+</header>
 <body>
     <main>
         <div id="scoreboard">
@@ -52,7 +55,7 @@
                     <tr>
                         <th scope="col">Game ID</th>
                         <th scope="col">Type</th>
-                        <th scope="col">Opponent</th>
+                        <th scope="col">Host</th>
                         <th scope="col">Join</th>
                     </tr>
                 </thead>
@@ -70,5 +73,5 @@
         </div>
     </main>
 </body>
-
+<div id="background-image"></div>
 </html>
