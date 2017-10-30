@@ -49,7 +49,7 @@ userSchema.methods.getRanking = function (cb) {
 userSchema.methods.getHistory = function (cb) {
     const ranking = [];
 
-    this.populate({ path: "pastGames", populate: "players.userId" }, (err, user) => {
+    this.populate({ path: "pastGames", populate: "userId" }, (err, user) => {
         if (err) cb(err);
 
         user.pastGames.forEach(function (game) {
