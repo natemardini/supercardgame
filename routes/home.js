@@ -9,7 +9,7 @@ module.exports = (passport) => {
      * GET /
      * If auth'ed, redirect to lobby
      */
-    router.get("/", passport.restricted, (req, res) => {
+    router.get("/", (req, res) => {
         res.redirect("/users/lobby");
     });
 
