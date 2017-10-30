@@ -13,6 +13,7 @@ let gameID;
 let currentRound;
 let gameData;
 let userPlayer;
+let userPlayer1;
 /**
  * This function pulls in the game data then 'deals' the cards.
  *
@@ -22,7 +23,6 @@ function initializeGame(gID){
     // $("#Start").click(function() {
         // $( ".card" ).remove(); // remove all the cards on the screen and start a new game
     $.getJSON(`/api/games/${gameID}`, function(data) {
-
         // Initial position for Player1 hand.
         let x = -500;
         const y = 400;
@@ -31,10 +31,17 @@ function initializeGame(gID){
             return p.userId === data.player;
         })[0];
 
+        userPlayer1 = data.game.players.filter(p => {
+            return p.userId != data.player;
+        })[0];
+
+
         // Set the current round and stash the current game data (global variables).
         currentRound = data.game.round;
         gameData = data;
 
+        // debugger;
+        $("#Score").html(`<a class="nav-link">The score is ${userPlayer.score} : ${userPlayer1.score}</a>`);
         // Create player1 hand and deal cards.
         $.each(userPlayer["hand"], function(key, value) {
             createCard(0, value["suit"], value["valueN"], -600, 400);
@@ -123,7 +130,7 @@ function bid(bidCard, suitName){
 /**
  *  This function will receive a json object which lists the current round.
  *  If the round has increased, we can end the turn otherwise redirect user back to lobby.
- * 
+ *
  */
 function processBid(objJSON){
     console.log(objJSON);
@@ -160,6 +167,7 @@ function processBid(objJSON){
                 strMsg += "losing ";
             }
             strMsg += player0["score"] + " to " + player1["score"];
+            // $("#Score").text(strMsg);
         } else {
             if (player1["score"] > player0["score"]){
                 strMsg += "winning ";
@@ -167,6 +175,7 @@ function processBid(objJSON){
                 strMsg += "losing ";
             }
             strMsg += player1["score"] + " to " + player0["score"];
+            // $("#Score").text(strMsg);
         }
 
         // Alert the current score (change to display on screen).
