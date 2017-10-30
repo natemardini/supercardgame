@@ -25,32 +25,31 @@
 </nav>
 
 <script>
-$(document).ready(function() {
-    $(".logout-link").click(function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-
-        $.ajax({
-            url: "/users/logout",
-            method: "Delete",
-            success: function() {
-                window.location = "/users/login";
-            }
+    $(document).ready(function() {
+        $(".logout-link").click(function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            $.ajax({
+                url: "/users/logout",
+                method: "Delete",
+                success: function() {
+                    window.location = "/users/login";
+                }
+            })
         })
+
+        const location = window.location.pathname.split("/").reverse()[0];
+
+        if (location === "login" || location === "register") {
+            $(".logout-link").closest("li").hide();
+            $(".match-history").closest("li").hide();
+            $(".login-link").closest("li").show();
+            $(".register-link").closest("li").show();
+        } else {
+            $(".logout-link").closest("li").show();
+            $(".match-history").closest("li").show();
+            $(".login-link").closest("li").hide();
+            $(".register-link").closest("li").hide();
+        }
     })
-
-    const location = window.location.pathname.split("/").reverse()[0];
-
-    if (location === "login" || location === "register") {
-        $(".logout-link").closest("li").hide();
-        $(".match-history").closest("li").hide();
-        $(".login-link").closest("li").show();
-        $(".register-link").closest("li").show();
-    } else {
-        $(".logout-link").closest("li").show();
-        $(".match-history").closest("li").show();
-        $(".login-link").closest("li").hide();
-        $(".register-link").closest("li").hide();
-    }
-})
 </script>

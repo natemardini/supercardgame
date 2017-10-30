@@ -1,10 +1,7 @@
 //colors
 $color_ocean_green_approx: #5ad75a;
 $color_mine_shaft_approx: #333;
-$color_lunar_green_approx: #334d41;
 $white: #fff;
-$color_tundora_approx: #444;
-$black_15: rgba(0,0,0,0.15);
 $black: #000;
 $color_guardsman_red_approx: #d40000;
 
@@ -13,7 +10,7 @@ $font_0: Open Sans;
 $font_1: sans-serif;
 $font_2: Ubuntu Condensed;
 
-//urls
+//cards images urls
 $url_0: url(../images/faces/back.png);
 $url_1: url(../images/faces/0_1.svg);
 $url_2: url(../images/faces/0_2.svg);
@@ -71,9 +68,6 @@ $url_53: url(../images/faces/4_1.svg);
 $url_54: url(../images/faces/4_2.svg);
 $url_55: url(../images/faces/4_3.svg);
 
-//@extend-elements
-//original selectors
-//.card:before, .card:after
 %extend_1 {
 	position: absolute;
 	font-size: 0.7rem;
@@ -87,7 +81,6 @@ $url_55: url(../images/faces/4_3.svg);
 
 
 * {
-	//Instead of the line below you could use @include box-sizing($bs)
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
@@ -96,7 +89,6 @@ html {
 	height: 100%;
 }
 body {
-	// height: 100%;
 	background-color: $color_ocean_green_approx;
 	color: $color_mine_shaft_approx;
 	font-family: $font_0, $font_1;
@@ -106,13 +98,13 @@ body {
 img.navbar-brand {
     padding: 10px 8px;
 }
+
 #Score .nav-link {
     padding-left: 3em;
 }
 #container {
     position: fixed;
     left: 50%;
-
 }
 
 .card:hover {
@@ -143,7 +135,6 @@ img.navbar-brand {
 		@extend %extend_1;
 		bottom: 0.1rem;
 		right: 0;
-		//Instead of the line below you could use @include transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
 		transform: rotate(180deg);
 	}
 	.face {
@@ -437,9 +428,7 @@ img.navbar-brand {
 		}
 	}
 }
-@media(max-width: 540px) {
 
-}
 @media(min-width: 0px) {
 	html {
 		font-size: 130%;
