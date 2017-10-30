@@ -50,6 +50,7 @@ function checkBids(game, prize) {
             const highBid = Math.max(...check);
             const winKey = _.find(Array.from(tally), e => e[1] === highBid)[0];
             game.players[winKey].score += prize.valueN;
+            game.markModified(`players.${winKey}.score`);
             cleanUp(game, prize);
         }
 
