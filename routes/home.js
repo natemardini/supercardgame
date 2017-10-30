@@ -10,7 +10,11 @@ module.exports = (passport) => {
      * If auth'ed, redirect to lobby
      */
     router.get("/", (req, res) => {
-        res.redirect("/users/lobby");
+        if (req.isAuthenticated()) {
+            res.redirect("users/lobby");
+        } else {
+            res.redirect("users/login");
+        }
     });
 
     /**
