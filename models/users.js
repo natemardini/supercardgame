@@ -12,6 +12,9 @@ const userSchema = new Schema({
     pastGames:   [{ type: Schema.Types.ObjectId, ref: "Game" }]
 });
 
+/**
+ * Hash the password before initial save to db
+ */
 userSchema.pre("save", function (next) {
     if (this.isNew) {
         bcrypt.hash(this.password, 10).then((digest) => {
@@ -23,10 +26,17 @@ userSchema.pre("save", function (next) {
     }
 });
 
+/**
+ * Compare password hashes
+ */
 userSchema.methods.validatePassword = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 
+/**
+ * Get a player's ranking, and number of match wins/losses to be displayed
+ * on the player's scoreboard on the lobby page.
+ */
 userSchema.methods.getRanking = function (cb) {
     const ratings = {
         wins: 0,
@@ -46,6 +56,9 @@ userSchema.methods.getRanking = function (cb) {
     });
 };
 
+/**
+ * Get a user's history of past matches for Match History page
+ */
 userSchema.methods.getHistory = function (cb) {
     const ranking = [];
 
@@ -70,6 +83,9 @@ userSchema.methods.getHistory = function (cb) {
     });
 };
 
+/**
+ * Get current players ranking for Ladder page
+ */
 userSchema.statics.getLadder = function (cb) {
 
     this.find().then((users) => {

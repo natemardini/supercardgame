@@ -1,24 +1,27 @@
 "use strict";
 
 const router = require("express").Router();
-const User = require("../models/users");
+const User   = require("../models/users");
 
 module.exports = (passport) => {
+
     /**
      * GET /users
+     * if Auth'ed, redirect to lobby
      */
-    router.get("/", (req, res) => {
-
-        res.send("Bad!");
-
+    router.get("/", passport.restricted, (req, res) => {
+        res.redirect("/users/lobby");
     });
 
+    /**
+     * GET /users/register
+     */
     router.get("/register", (req, res) => {
         res.render("users/register");
     });
 
     /**
-     * PUT /api/users
+     * PUT /users
      * Register a new user
      */
     router.put("/", (req, res) => {
@@ -31,16 +34,16 @@ module.exports = (passport) => {
     });
 
     /**
-    * PUT /api/users
-    * Register a new user
+    * GET /users/login
+    * Fetch login page
     */
     router.get("/login", (req, res) => {
         res.render("users/login");
     });
 
     /**
-    * PUT /api/users
-    * Register a new user
+    * PUT /users/login
+    * Login the user to new session, using PassportJS middleware
     */
     router.put("/login", passport.authenticate("local", {
         successRedirect: "/users/lobby",
@@ -48,7 +51,8 @@ module.exports = (passport) => {
     }));
 
     /**
-    * DELETE /api/users/[id]
+    * DELETE /users/logout
+    * End the user session
     */
     router.delete("/logout", passport.restricted, (req, res) => {
         req.logout();
@@ -56,7 +60,8 @@ module.exports = (passport) => {
     });
 
     /**
-    * GET /api/users/[id]
+    * GET /users/lobby
+    * Go to the user's lobby page
     */
     router.get("/lobby", passport.restricted, (req, res) => {
         req.user.getRanking((err, ranking) => {
@@ -65,29 +70,14 @@ module.exports = (passport) => {
     });
 
     /**
-    * GET /api/users/[id]
+    * GET /users/history
+    * Go to the user's match history page
     */
     router.get("/history", passport.restricted, (req, res) => {
         req.user.getHistory((err, ranking) => {
             res.render("users/history", { ranking });
         });
     });
-
-    /**
-     * GET /api/users/[id]
-     */
-    router.get("/:id", (req, res) => {
-    });
-
-    /**
-     * PATCH /api/users/[id]
-     */
-    router.patch("/:id", (req, res) => {
-        User.findAll({}).then(users => {
-            res.json(users);
-        });
-    }
-    );
 
     return router;
 };

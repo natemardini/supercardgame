@@ -43,7 +43,10 @@ const gameSchema = new Schema({
 });
 
 
-// GAME METHODS
+/**
+ * Set basic game data before save. If pending game (status 1), then check
+ * if its start requirements have been met, if so, call setup() method.
+ */
 gameSchema.pre("save", function (next) {
     if (this.isNew) {
         this.round = 1;
@@ -54,6 +57,10 @@ gameSchema.pre("save", function (next) {
     next();
 });
 
+/**
+ * Method to add a player to a game, and making a ref of that game in player's
+ * activeGames property
+ */
 gameSchema.methods.addPlayer = function (player, cb) {
     const that = this;
 
@@ -86,6 +93,10 @@ gameSchema.methods.addPlayer = function (player, cb) {
     });
 };
 
+/**
+ * When done computing round, advance the round by 1, and change
+ * active players (for games that keep track of active players)
+ */
 gameSchema.methods.advanceRound = function () {
     let index = _.findIndex(this.players, "active");
     index === -1 ? index = _.random(0, this.players.length - 1) : index;
@@ -102,6 +113,10 @@ gameSchema.methods.advanceRound = function () {
     this.round++;
 };
 
+/**
+ * Setup and distribute cards (see Card class for further detail)
+ * and change game from status 1 to 2 (active)
+ */
 gameSchema.methods.setup = function () {
     switch (this.gameType) {
     case 1:
@@ -126,10 +141,14 @@ gameSchema.methods.setup = function () {
         break;
     }
 
-    //TODO: Add email to users notifying them of new game.
     this.status = 2;
 };
 
+/**
+ * Depending on game (i.e., 1 = Goofspiel), calls that gametype's logic
+ * to mutate the game data, then saves to db.
+ * If game is over and there is a winner, calls endGame() first
+ */
 gameSchema.methods.computeRound = function (user, input, cb) {
     let game, winner;
 
@@ -153,6 +172,10 @@ gameSchema.methods.computeRound = function (user, input, cb) {
     }
 };
 
+/**
+ * Change game to status 3 (over), and move it from each player's activeGames
+ * to pastGames property in db
+ */
 gameSchema.methods.endGame = function () {
     this.populate({ path: "players.userId", populate: ["activeGames", "pastGames"] }, (err, game) => {
         //const players = [];
@@ -161,10 +184,8 @@ gameSchema.methods.endGame = function () {
             const gm = p.userId.activeGames.filter(g => {
                 return g.id === game.id;
             })[0];
-            _.pull(p.userId.activeGames, gm);
             p.userId.activeGames.pull(gm);
             p.userId.pastGames.push(gm);
-            //players.push(p);
         });
 
         game.status = 3;
@@ -175,6 +196,16 @@ gameSchema.methods.endGame = function () {
     });
 };
 
+/**
+ * Attempt to match a player based on their ELO ranking using a recursive
+ * function that looks for games hosted by players within 50 rank points from
+ * player, then expands that by 50 for each recursion until a game is found.
+ *
+ * @param {User} user
+ * @param {number} gameType
+ * @param cb
+ * @return {Game}
+ */
 gameSchema.statics.findMatch = function (user, gameType, cb) {
     let game = null;
 
@@ -209,6 +240,10 @@ gameSchema.statics.findMatch = function (user, gameType, cb) {
     }
 };
 
+/**
+ * For each game type, see if start requirements have been met (i.e. for
+ * Goofspiel, that there are 2 players)
+ */
 gameSchema.methods.checkStartRequirements = function () {
     switch (this.gameType) {
     case 1:
@@ -218,6 +253,10 @@ gameSchema.methods.checkStartRequirements = function () {
     }
 };
 
+/**
+ * After a game is over, rank the players using ELO ranking package,
+ * @return {Promise} users save
+ */
 gameSchema.methods.rankPlayers = function () {
     const elo = new EloRank();
 

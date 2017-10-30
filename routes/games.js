@@ -2,11 +2,12 @@
 
 const router = require("express").Router();
 const Game = require("../models/games");
-const User = require("../models/users");
 
 module.exports = (passport) => {
+
     /**
      * GET /api/games
+     * @return {json} current player and active games list
      */
     router.get("/", passport.restricted, (req, res) => {
         req.user.populate({
@@ -26,8 +27,9 @@ module.exports = (passport) => {
     });
 
     /**
-    * GET /api/games
-    */
+     * GET /api/games/pending
+     * @return {json} current player and pending games list
+     */
     router.get("/pending", passport.restricted, (req, res) => {
         Game.find({ status: 1 }).populate({ path: "players.userId", select: "handle" }).then(games => {
             res.json({games, user: req.user.id });
@@ -36,6 +38,8 @@ module.exports = (passport) => {
 
     /**
      * PUT /api/games
+     * Add player to pending game and
+     * @return {json} new games list
      */
     router.put("/", passport.restricted, (req, res) => {
         const game = new Game({ gameType: req.body.type });
@@ -52,6 +56,9 @@ module.exports = (passport) => {
 
     /**
      * PUT /api/games/match
+     * Use the Game#findmatch method to attempt and match
+     * the user to existing match
+     * @return {json} matched game
      */
     router.put("/match", passport.restricted, (req, res) => {
         Game.findMatch(req.user, req.body.type, (err, game) => {
@@ -61,7 +68,9 @@ module.exports = (passport) => {
     });
 
     /**
-    *  POST /api/games/[id]
+    *  PUT /api/games/join
+    *  Join a specific pending game
+    *  Sends a 200 OK response if successful
     */
     router.put("/join", passport.restricted, (req, res) => {
         Game.findById(req.body.id).then(game => {
@@ -77,6 +86,8 @@ module.exports = (passport) => {
 
     /**
      * POST /api/games/[id]
+     * Receive player's game input, and send to Game model for computation
+     * @return {json} [game] new game state
      */
     router.post("/:id", passport.restricted, (req, res) => {
         Game.findById(req.params.id).then(game => {
@@ -90,6 +101,8 @@ module.exports = (passport) => {
 
     /**
     * GET /api/games/[id]
+    * Get game state for initial board set-up
+    * @return {json} {game, current player}
     */
     router.get("/:id", passport.restricted, (req, res) => {
         Game.findById(req.params.id).then(game => {
@@ -100,17 +113,6 @@ module.exports = (passport) => {
             res.json(data);
         }).catch(e => res.status(500).json(e));
     });
-
-
-    /**
-     * DELETE /api/games/[id]
-     */
-    router.delete("/:id",
-        passport.authenticate("local"),
-        (req, res) => {
-
-        }
-    );
 
     return router;
 };

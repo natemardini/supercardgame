@@ -4,19 +4,18 @@ const router = require("express").Router();
 const User = require("./../models/users");
 
 module.exports = (passport) => {
+
     /**
      * GET /
+     * If auth'ed, redirect to lobby
      */
-    router.get("/", (req, res) => {
-        if (req.isAuthenticated()) {
-            res.redirect("/users/lobby");
-        } else {
-            res.redirect("/users/login");
-        }
+    router.get("/", passport.restricted, (req, res) => {
+        res.redirect("/users/lobby");
     });
 
     /**
-     * GET /html
+     * GET /ladder
+     * Go to the ladder page
      */
     router.get("/ladder", (req, res) => {
         User.getLadder((err, players) => {
@@ -25,7 +24,9 @@ module.exports = (passport) => {
     });
 
     /**
-     * GET /html
+     * GET /game/[id]
+     * Go to the specific page of an active game
+     * Note: Game data handled by /api/games router
      */
     router.get("/game/:id", passport.restricted, (req, res) => {
         res.render("games/show");

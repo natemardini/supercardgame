@@ -27,7 +27,7 @@ app.use(morgan("dev"));
 app.use(methodOverride("_method"));
 app.use(session({
     name:              "supercardgame.sid",
-    secret:            "sky is falling", // TODO: Replace with environment variable
+    secret:            process.env.SECRET_KEY, // TODO: Replace with environment variable
     maxAge:            2 * 24 * 60 * 60 * 1000,
     resave:            true,
     saveUninitialized: false,
@@ -44,8 +44,8 @@ app.set("views", path.join(__dirname, "views"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/styles", sass({
-    src: `${__dirname}/styles`,
-    dest: `${__dirname}/public/styles`,
+    src:   `${__dirname}/styles`,
+    dest:  `${__dirname}/public/styles`,
     debug: true,
     outputStyle: "expanded"
 }));
