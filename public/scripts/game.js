@@ -153,7 +153,7 @@ function processBid(objJSON){
 
         // FOR FUTURE REF, objJSON["players"][0]["_id"] is the user id.
         let strMsg = "You are ";
-        if (userPlayer === player0["_id"]){
+        if (player0["active"]){
             if (player0["score"] > player1["score"]){
                 strMsg += "winning ";
             } else {
