@@ -47,12 +47,11 @@ module.exports = (passport) => {
     });
 
     /**
-    * DELETE /users/logout
-    * Register a new user
+    * DELETE /api/users/[id]
     */
-    router.get("/logout", function (req, res) {
+    router.delete("/logout", passport.restricted, (req, res) => {
         req.logout();
-        res.redirect("/");
+        res.send(200);
     });
 
     /**
@@ -78,16 +77,6 @@ module.exports = (passport) => {
             res.json(users);
         });
     }
-    );
-
-    /**
-     * DELETE /api/users/[id]
-     */
-    router.delete("/",
-        passport.authenticate("local"),
-        (req, res) => {
-
-        }
     );
 
     return router;

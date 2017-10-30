@@ -4,7 +4,8 @@ main {
     padding: 10px;
     margin: 20px auto;
     background-color: #ffffff;
-    border-radius: 5px;
+    border-radius: 10px;
+    border: 1px black solid;
 
 
     div {
@@ -12,8 +13,9 @@ main {
 
         &#scoreboard {
             background-color: #5ad75a;
+            opacity: 0.8;
             color: white;
-            border-radius: 5px;
+            border-radius: 10px;
             padding: 5px 10px;
             font-size: 200%;
             display: flex;
@@ -21,6 +23,15 @@ main {
         }
     }
 
+    div:last-child {
+        display: flex;
+        justify-content: space-evenly;
+        button {
+            background-color: #5ad75a;
+            border-color: #5ad75a;
+
+        }
+    }
 }
 
 body {
