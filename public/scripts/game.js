@@ -1,5 +1,5 @@
 // console.log(window.location.split("/").reverse()[0]);
-console.log(window.location.search.substr(-24));
+//console.log(window.location.search.substr(-24));
 
 $(document).ready(function () {
     // REMOVE THIS and replace with call event on click.
@@ -10,6 +10,9 @@ $(document).ready(function () {
 let zIndex = 100;
 let prizeCard = {};
 let gameID;
+let currentRound;
+let gameData;
+let userPlayer;
 /**
  * This function pulls in the game data then 'deals' the cards.
  *
@@ -18,40 +21,40 @@ function initializeGame(gID){
     gameID = gID;
     // $("#Start").click(function() {
         // $( ".card" ).remove(); // remove all the cards on the screen and start a new game
-        $.getJSON(`/api/games/${gameID}`, function(data) {
+    $.getJSON(`/api/games/${gameID}`, function(data) {
 
         // Initial position for Player1 hand.
         let x = -500;
         const y = 400;
 
-        const userPlayer = data.game.players.filter(p => {
+        userPlayer = data.game.players.filter(p => {
             return p.userId === data.player;
-        })[0]
+        })[0];
 
-        console.log(data);
+        // Set the current round and stash the current game data (global variables).
+        currentRound = data.game.round;
+        gameData = data;
 
-            // Create player1 hand and deal cards.
-            $.each(userPlayer["hand"], function(key, value) {
-                createCard(0, value["suit"], value["valueN"], -600, 400);
-                testCard(value["suit"], value["valueN"], x, y);
+        // Create player1 hand and deal cards.
+        $.each(userPlayer["hand"], function(key, value) {
+            createCard(0, value["suit"], value["valueN"], -600, 400);
+            delayCard(value["suit"], value["valueN"], x, y);
 
-
-                // If there's more cards, the next one should be shifted +90.
-                x +=90;
-                addCardClick(0, value["suit"], value["valueN"], -50, 230);
-            });
-
-
-            // create prize cards
-            $.each(data["game"]["deck"]["prize"], function(key, value) {
-                createCard(0, value["suit"], value["valueN"], 40, 80);
-                addCardClick(0, value["suit"], value["valueN"], 40, 230);
-                prizeCard = {
-                    "suit": value["suit"],
-                    "value": value["valueN"]
-                };
-            });
+            // If there's more cards, the next one should be shifted +90.
+            x +=90;
+            addCardClick(0, value["suit"], value["valueN"], -50, 230);
         });
+
+        // create prize cards
+        $.each(data["game"]["deck"]["prize"], function(key, value) {
+            createCard(0, value["suit"], value["valueN"], 40, 80);
+            //addCardClick(0, value["suit"], value["valueN"], 40, 230);
+            prizeCard = {
+                "suit": value["suit"],
+                "value": value["valueN"]
+            };
+        });
+    });
 
     // });
 }
@@ -59,7 +62,7 @@ function initializeGame(gID){
 /**
  * test card function
  */
-function testCard (suit, rank, x, y){
+function delayCard (suit, rank, x, y){
     // let transform = prefix("transform");
 
     let $changePoz = document.getElementById(`card_${suit}_rank${rank}`);
@@ -103,18 +106,73 @@ function bid(bidCard, suitName){
         prizeCard
     };
 
-    console.log(bidCards);
     $.ajax({
         type: "POST",
         url: `/api/games/${gameID}`,
         data: JSON.stringify(bidCards),//JSON.stringify(bidCards),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function(data){console.log(data);},
+        success: function(data){processBid(data);},
         failure: function(errMsg) {
             alert(errMsg);
         }
     });
+
+}
+
+/**
+ *  This function will receive a json object which lists the current round.
+ *  If the round has increased, we can end the turn otherwise redirect user back to lobby.
+ * 
+ */
+function processBid(objJSON){
+    console.log(objJSON);
+    // The round is the same if we're waiting for the opponent to bid.
+    if (objJSON["round"] === currentRound){
+        window.location = "/users/lobby";
+    } else {
+
+        // Create array of old prizes (to be removed from the board).
+        let prizeDiff = deepDiffMapper.map(gameData["game"]["deck"]["prize"], objJSON["deck"]["prize"]);
+
+        // Find the "deleted" record based on type.
+        for (let prize in prizeDiff){
+            if(prizeDiff[prize]["type"]){
+                $(`div.card.${prizeDiff[prize]["data"]["suit"]}.rank${prizeDiff[prize]["data"]["valueN"]}`).detach();
+                //console.log(prizeDiff[prize]["data"]["suit"] + " " + prizeDiff[prize]["data"]["valueN"]);
+debugger;
+                // Need to update prize card or refresh/reload the gameboard?
+                prizeCard = {
+                    "suit": prizeDiff[prize - 1]["suit"],
+                    "value": prizeDiff[prize - 1]["valueN"]
+                };
+            }
+        }
+        const player0 = objJSON["players"][0];
+        const player1 = objJSON["players"][1];
+
+        // FOR FUTURE REF, objJSON["players"][0]["_id"] is the user id.
+        let strMsg = "You are ";
+        if (userPlayer === player0["_id"]){
+            if (player0["score"] > player1["score"]){
+                strMsg += "winning ";
+            } else {
+                strMsg += "losing ";
+            }
+            strMsg += player0["score"] + " to " + player1["score"];
+        } else {
+            if (player1["score"] > player0["score"]){
+                strMsg += "winning ";
+            } else {
+                strMsg += "losing ";
+            }
+            strMsg += player1["score"] + " to " + player0["score"];
+        }
+
+        // Alert the current score (change to display on screen).
+        //let strMsg = `${objJSON["players"][0]["score"]} to ${objJSON["players"][1]["score"]}`;
+        alert(strMsg);
+    }
 
 }
 
@@ -317,3 +375,78 @@ function createCard(i, suitName, rankName, x, y){
 
 }
 
+//https://stackoverflow.com/questions/8572826/generic-deep-diff-between-two-objects
+let deepDiffMapper = function() {
+    return {
+        VALUE_CREATED: 'created',
+        VALUE_UPDATED: 'updated',
+        VALUE_DELETED: 'deleted',
+        VALUE_UNCHANGED: 'unchanged',
+        map: function(obj1, obj2) {
+            if (this.isFunction(obj1) || this.isFunction(obj2)) {
+                throw 'Invalid argument. Function given, object expected.';
+            }
+            if (this.isValue(obj1) || this.isValue(obj2)) {
+                return {
+                    type: this.compareValues(obj1, obj2),
+                    data: (obj1 === undefined) ? obj2 : obj1
+                };
+            }
+
+            var diff = {};
+            for (var key in obj1) {
+                if (this.isFunction(obj1[key])) {
+                    continue;
+                }
+
+                var value2 = undefined;
+                if ('undefined' != typeof(obj2[key])) {
+                    value2 = obj2[key];
+                }
+
+                diff[key] = this.map(obj1[key], value2);
+            }
+            for (var key in obj2) {
+                if (this.isFunction(obj2[key]) || ('undefined' != typeof(diff[key]))) {
+                    continue;
+                }
+
+                diff[key] = this.map(undefined, obj2[key]);
+            }
+
+            return diff;
+
+        },
+        compareValues: function(value1, value2) {
+            if (value1 === value2) {
+                return this.VALUE_UNCHANGED;
+            }
+            if (this.isDate(value1) && this.isDate(value2) && value1.getTime() === value2.getTime()) {
+                return this.VALUE_UNCHANGED;
+            }
+            if ('undefined' == typeof(value1)) {
+                return this.VALUE_CREATED;
+            }
+            if ('undefined' == typeof(value2)) {
+                return this.VALUE_DELETED;
+            }
+
+            return this.VALUE_UPDATED;
+        },
+        isFunction: function(obj) {
+            return {}.toString.apply(obj) === '[object Function]';
+        },
+        isArray: function(obj) {
+            return {}.toString.apply(obj) === '[object Array]';
+        },
+        isDate: function(obj) {
+            return {}.toString.apply(obj) === '[object Date]';
+        },
+        isObject: function(obj) {
+            return {}.toString.apply(obj) === '[object Object]';
+        },
+        isValue: function(obj) {
+            return !this.isObject(obj) && !this.isArray(obj);
+        }
+    }
+}();
