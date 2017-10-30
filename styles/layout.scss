@@ -24,8 +24,9 @@ body {
 	//Instead of the line below you could use @include user-select($select)
 	user-select: none;
 	overflow: hidden;
-	text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
+
 #container {
 	position: fixed;
 	top: calc(50% +1.5rem);

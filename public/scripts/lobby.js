@@ -77,20 +77,32 @@ function findActiveGames() {
 function parsePendingGames(data) {
     let table = "";
 
-    if (!Array.isArray(data)) {
-        data = [data];
+    let { user, games } = data;
+
+    if (!Array.isArray(games)) {
+        games = [games];
     }
 
-    data.forEach((game) => {
 
+    games.forEach((game) => {
+
+
+        const ownGame = game.players[0].userId._id === user;
         const creator = game.players[0].userId["handle"] || "Bot";
 
-        const str = `<tr data-game-id="${game._id}">
+        let str = `<tr data-game-id="${game._id}">
                         <th scope="row">${game._id.slice(-3).toUpperCase()}</th>
                         <td>Goofspiel</td>
-                        <td>${creator}</td>
-                        <td><button class="join-game">Join!</button></td>
+                        <td>${creator}</td>`;
+
+        if (!ownGame) {
+            str += `<td><button class="join-game btn btn-outline-dark btn-sm">Join!</button></td>
                     </tr>`;
+        } else {
+            str += `<td>Waiting</td>
+                    </tr>`;
+        }
+
 
         table += str;
     });
@@ -109,10 +121,15 @@ function parseActiveGames(data) {
 
     activeGames.forEach((game) => {
 
-        const creator = game.players[0].userId["handle"] || "Bot";
         const userPlayer = game.players.filter(p => {
-            return p.userId === currentPlayer;
+            return p.userId._id === currentPlayer;
         })[0];
+
+        let opponent = game.players.filter(p => {
+            return p.userId._id !== currentPlayer;
+        })[0];
+
+        opponent = (opponent && opponent.userId.handle) || "";
 
         let status = "";
 
@@ -121,7 +138,7 @@ function parseActiveGames(data) {
         } else if (game.status === 2 && userPlayer.atRound > game.round) {
             status = "Waiting...";
         } else if (game.status === 2 && userPlayer.atRound === game.round) {
-            status = "<button class='play-game'>Play</button>";
+            status = "<button class='play-game btn btn-outline-success btn-sm'>Play</button>";
         } else {
             status = "Borked";
         }
@@ -129,7 +146,7 @@ function parseActiveGames(data) {
         const str = `<tr data-game-id="${game._id}">
                         <th scope="row">${game._id.slice(-3).toUpperCase()}</th>
                         <td>Goofspiel</td>
-                        <td>${creator}</td>
+                        <td>${opponent}</td>
                         <td>${status}</td>
                     </tr>`;
 

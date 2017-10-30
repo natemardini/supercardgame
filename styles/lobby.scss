@@ -1,21 +1,43 @@
 main {
-    width: 50%;
-    margin: 0 auto;
+    position: relative;
+    width: 55%;
+    padding: 10px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 1px black solid;
+
+
     div {
         margin: 50px auto;
 
         &#scoreboard {
             background-color: #5ad75a;
+            opacity: 0.8;
             color: white;
-            border-radius: 5px;
+            border-radius: 10px;
             padding: 5px 10px;
             font-size: 200%;
             display: flex;
             justify-content: space-evenly;
         }
-
     }
 
+    div:last-child {
+        display: flex;
+        justify-content: space-evenly;
+        button {
+            background-color: #5ad75a;
+            border-color: #5ad75a;
 
+        }
+    }
 }
+
+body {
+    background-image: url(/images/bg.jpeg);
+    min-height: 100vh;
+}
+
+
 
