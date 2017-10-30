@@ -1,11 +1,7 @@
-// console.log(window.location.split("/").reverse()[0]);
-//console.log(window.location.search.substr(-24));
-
 $(document).ready(function () {
-    // REMOVE THIS and replace with call event on click.
+    // Call the initialize command when the page is loaded and ready.
     initializeGame(window.location.search.substr(-24));
 });
-
 
 let zIndex = 100;
 let prizeCard = {};
@@ -16,38 +12,35 @@ let userPlayer;
 let userPlayer1;
 /**
  * This function pulls in the game data then 'deals' the cards.
- *
+ * The gameID is passed to the parameter to stash it in a global variable.
  */
 function initializeGame(gID){
     gameID = gID;
-    // $("#Start").click(function() {
-        // $( ".card" ).remove(); // remove all the cards on the screen and start a new game
     $.getJSON(`/api/games/${gameID}`, function(data) {
         // Initial position for Player1 hand.
         let x = -500;
         const y = 400;
 
+        // Get the userids for each player.
         userPlayer = data.game.players.filter(p => {
             return p.userId === data.player;
         })[0];
 
         userPlayer1 = data.game.players.filter(p => {
-            return p.userId != data.player;
+            return p.userId !== data.player;
         })[0];
-
 
         // Set the current round and stash the current game data (global variables).
         currentRound = data.game.round;
         gameData = data;
 
+        // Check if the current round for the game is in sync with the player.
         const canPlay = userPlayer.atRound <= currentRound;
 
-
-        // debugger;
+        // Update scores.
         $("#Score").find(".current-player-score").text(`${userPlayer.score} `);
         $("#Score").find(".other-player-score").text(` ${userPlayer1.score}`);
 
-        //$("#Score").html(`<a class="nav-link">The score is ${userPlayer.score} : ${userPlayer1.score}</a>`);
         // Create player1 hand and deal cards.
         $.each(userPlayer["hand"], function(key, value) {
             createCard(0, value["suit"], value["valueN"], -600, 400);
@@ -70,22 +63,19 @@ function initializeGame(gID){
         });
     });
 
-    // });
 }
 
 /**
- * test card function
+ *  This function delays the movement of cards across the board.
  */
 function delayCard (suit, rank, x, y){
-    // let transform = prefix("transform");
-
     let $changePoz = document.getElementById(`card_${suit}_rank${rank}`);
     setTimeout(function(){ $changePoz.style.transform = `translate(${x  }px, ${y  }px)`;}, 100);
 }
 
 
 /**
- * addCardClick
+ * The addCardClick function adds a click event listener to cards (i.e. players hand to bid).
  * @param {*} x
  * @param {*} suitName
  * @param {*} rankName
@@ -102,18 +92,16 @@ function addCardClick(i, suitName, rankName, x, y) {
         bid(rankName, suitName);
         moveCard(divName, bidCardPosition);
     });
-
 }
 
 /**
- *
+ * This function sends the player bid card and prize card to the backend for processing.
  * @param {any} bidCard
  * @param {any} prizeCard
  */
 function bid(bidCard, suitName){
     const bidCards = {
         bidCard: {
-            // "deck": prizeCard["deck"],
             "suit": suitName,
             "value": bidCard
         },
@@ -123,7 +111,7 @@ function bid(bidCard, suitName){
     $.ajax({
         type: "POST",
         url: `/api/games/${gameID}`,
-        data: JSON.stringify(bidCards),//JSON.stringify(bidCards),
+        data: JSON.stringify(bidCards),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function () {
@@ -155,7 +143,6 @@ function processBid(objJSON){
         for (let prize in prizeDiff){
             if(prizeDiff[prize]["type"]){
                 $(`div.card.${prizeDiff[prize]["data"]["suit"]}.rank${prizeDiff[prize]["data"]["valueN"]}`).detach();
-                //console.log(prizeDiff[prize]["data"]["suit"] + " " + prizeDiff[prize]["data"]["valueN"]);
 
                 // Need to update prize card or refresh/reload the gameboard?
                 prizeCard = {
@@ -167,7 +154,7 @@ function processBid(objJSON){
         const player0 = objJSON["players"][0];
         const player1 = objJSON["players"][1];
 
-        // FOR FUTURE REF, objJSON["players"][0]["_id"] is the user id.
+        // Build a simple message to keep tabs on the current players score (for display purposes).
         let strMsg = "You are ";
         if (player0["active"]){
             if (player0["score"] > player1["score"]){
@@ -176,7 +163,6 @@ function processBid(objJSON){
                 strMsg += "losing ";
             }
             strMsg += player0["score"] + " to " + player1["score"];
-            // $("#Score").text(strMsg);
         } else {
             if (player1["score"] > player0["score"]){
                 strMsg += "winning ";
@@ -184,7 +170,6 @@ function processBid(objJSON){
                 strMsg += "losing ";
             }
             strMsg += player1["score"] + " to " + player0["score"];
-            // $("#Score").text(strMsg);
         }
 
         // Alert the current score (change to display on screen).
@@ -223,7 +208,7 @@ function moveCard(oldCard, bidPosition){
 }
 
 /**
- *
+ * This function is utilized as a shorthand helper function as part of creating the cards.
  * @param {any} type
  * @returns
  */
@@ -231,14 +216,10 @@ function createElement(type) {
     return document.createElement(type);
 }
 
-// function addListener(target, name, listener) {
-//     target.addEventListener(name, listener);
-// }
-
 /**
  *
- *
- * @returns
+ * Display/browser related helper functions.
+ * 
  */
 function check3d() {
     // I admit, this line is stealed from the great Velocity.js!
@@ -264,11 +245,11 @@ function check3d() {
 }
 
 /**
- *
+ * This function is utilized to move cards around.
  * @param {any} a
  * @param {any} b
  * @param {any} c
- * @returns
+ * @returns the css-style syntax for the card movement.
  */
 function translate(a, b, c) {
     typeof has3d !== "undefined" || (has3d = check3d());
@@ -287,7 +268,7 @@ const memoized = {};
 
 /**
  *
- *
+ * Display/browser related helper functions.
  * @param {any} param
  * @returns
  */
@@ -315,9 +296,9 @@ function prefix(param) {
 }
 
 /**
+ * This function creates the card based on the given parameters.
  *
- *
- * @param {any} i
+ * @params for each card, including location.
  */
 function createCard(i, suitName, rankName, x, y){
     const transform = prefix("transform");
@@ -340,60 +321,20 @@ function createCard(i, suitName, rankName, x, y){
 
     $container.appendChild($el);
 
-    // self = card
-    // const self = { i: i, rank: rank, suit: suit, pos: i, $el: $el, mount: mount, unmount: unmount };
-
-    //let modules = Deck.modules;
-    //let module;
-
     // add classes
     $face.classList.add("face");
     $back.classList.add("back");
 
     // add default transform
-    //$el.style[transform] = translate(-z + "px", -z + "px");
-    // $el.style[transform] = translate(`${-50  }px`, `${80  }px`);
     $el.style[transform] = translate(`${x  }px`, `${y  }px`);
-    // $el.style.visibility = 'hidden';
-
-    // add default values
-    // self.x = -z;
-    // self.y = -z;
-    // self.z = z;
-    // self.rot = 0;
 
     $el.appendChild($face);
-
-    // add drag/click listeners
-    // addListener($el, "mousedown", onMousedown);
-    // addListener($el, "touchstart", onMousedown);
-
-    // load modules
-    // for (module in modules) {
-    //     addModule(modules[module]);
-    // }
-
-    // function addModule(module) {f
-    //     // add card module
-    //     module.card && module.card(self);
-    // }
-
-    // function mount(target) {
-    //     // mount card to target (deck)
-    //     target.appendChild($el);
-
-    //     self.$root = target;
-    // }
-
-    // function unmount() {
-    //     // unmount from root (deck)
-    //     self.$root && self.$root.removeChild($el);
-    //     self.$root = null;
-    // }
-
 }
-
-//https://stackoverflow.com/questions/8572826/generic-deep-diff-between-two-objects
+/**
+ * This function allows a comparison of two javascript objects.
+ * A detailed object is returned, containing on the details on what is the same or different.
+ * 
+ */ Ref: https://stackoverflow.com/questions/8572826/generic-deep-diff-between-two-objects
 let deepDiffMapper = function() {
     return {
         VALUE_CREATED: 'created',
