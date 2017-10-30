@@ -140,7 +140,7 @@ function processBid(objJSON){
             if(prizeDiff[prize]["type"]){
                 $(`div.card.${prizeDiff[prize]["data"]["suit"]}.rank${prizeDiff[prize]["data"]["valueN"]}`).detach();
                 //console.log(prizeDiff[prize]["data"]["suit"] + " " + prizeDiff[prize]["data"]["valueN"]);
-debugger;
+
                 // Need to update prize card or refresh/reload the gameboard?
                 prizeCard = {
                     "suit": prizeDiff[prize - 1]["suit"],
