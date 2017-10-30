@@ -16,8 +16,8 @@ let gameID;
  */
 function initializeGame(gID){
     gameID = gID;
-    $("#Start").click(function() {
-        $( ".card" ).remove(); // remove all the cards on the screen and start a new game
+    // $("#Start").click(function() {
+        // $( ".card" ).remove(); // remove all the cards on the screen and start a new game
         $.getJSON(`/api/games/${gameID}`, function(data) {
 
         // Initial position for Player1 hand.
@@ -53,7 +53,7 @@ function initializeGame(gID){
             });
         });
 
-    });
+    // });
 }
 
 /**
