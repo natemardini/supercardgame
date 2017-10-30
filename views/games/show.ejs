@@ -60,7 +60,41 @@
 
         </div>
 
+<script>
+$(document).ready(function() {
+    $("#Logout").click(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
 
+        $.ajax({
+            url: "/users/logout",
+            method: "Delete",
+            success: function() {
+                window.location = "/users/login";
+            }
+        })
+    })
+
+    $("#Lobby").click(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        window.location = "/users/lobby";
+
+        // $.ajax({
+        //     url: "/users/login",
+        //     method: "GET",
+        //     success: function() {
+        //         window.location = "/users/lobby";
+        //     }
+        // })
+    })
+})
+
+$(document).ready(function() {
+
+})
+</script>
     </body>
 </html>
 
