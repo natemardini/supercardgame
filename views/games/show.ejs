@@ -11,17 +11,21 @@
  <!--          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
         crossorigin="anonymous"> -->
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="/styles/nav.css" type="text/css" />
+       <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+        crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/cb2ce4e278.js"></script>
+        <link rel="stylesheet" href="/styles/nav.css" type="text/css" />
 
         <!-- <link rel="stylesheet" href="/styles/layout.css"> -->
         <link rel="stylesheet" href="/styles/game.css" type="text/css" />
         <link rel="stylesheet" href="/vendor/border-box.css" type="text/css" />
         <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" type="text/css" />
+      <!--  <script type="text/javascript" src="/vendor/jquery-3.0.0.js"></script> -->
 
         <script type="text/javascript" src="/scripts/game.js"></script>
-        <script type="text/javascript" src="/vendor/jquery-3.0.0.js"></script>
     </head>
 
 <header>
@@ -30,14 +34,15 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <img class="navbar-brand" src="/images/poke1.jpg">
-                    <a class="navbar-brand" id="Goodfspiel" href="">Goofspiel</a>
+                    <!--<a class="navbar-brand" id="Goodfspiel" href="">Goofspiel</a> -->
                 </div>
                 <ul class="nav navbar-nav">
                     <!--  <li class="active" id="Start"><a >Start Game</a></li> -->
-                    <li class="active" id="Lobby"><a class="nav-link" href="">Lobby</a></li>
+                    <li class="nav-item" id="Lobby"><a class="nav-link" href="">Lobby</a></li>
 
-                    <li class="active" id="Logout"><a class="nav-link" href="">Logout</a></li>
-                    <li class="active" id="Score"><a class="nav-link">Score</a></li>
+                    <li class="nav-item" id="Logout"><a class="nav-link" href="">Logout</a></li>
+                    <li class="nav-item" id="Score"><span class="navbar-text">
+                    <span class="current-player-score">0 </span><i class="fa fa-star-half-o" aria-hidden="true"></i><span class="other-player-score"> 0</span></span></li>
 
                 </ul>
             </div>

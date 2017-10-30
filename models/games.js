@@ -154,19 +154,26 @@ gameSchema.methods.computeRound = function (user, input, cb) {
 };
 
 gameSchema.methods.endGame = function () {
-    this.populate("userId", (err, game) => {
-        const players = [];
+    this.populate({ path: "players.userId", populate: ["activeGames", "pastGames"] }, (err, game) => {
+        //const players = [];
 
         game.players.forEach(p => {
-            const game = p.activeGames.filter(g => g === game._id)[0];
-            _.pull(p.activeGames, game);
-            p.pastGames.push(game);
-            players.push(p);
+            const gm = p.userId.activeGames.filter(g => {
+                return g.id === game.id;
+            })[0];
+            _.pull(p.userId.activeGames, gm);
+            p.userId.activeGames.pull(gm);
+            p.userId.pastGames.push(gm);
+            //players.push(p);
         });
 
         game.status = 3;
 
-        return Promise.all([...players.save(), game.save()]);
+        return Promise.all([
+            game.players[0].userId.save(),
+            game.players[1].userId.save(),
+            game.save()
+        ]);
     });
 };
 

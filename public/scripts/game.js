@@ -40,16 +40,23 @@ function initializeGame(gID){
         currentRound = data.game.round;
         gameData = data;
 
+        const canPlay = userPlayer.atRound <= currentRound;
+
+
         // debugger;
-        $("#Score").html(`<a class="nav-link">The score is ${userPlayer.score} : ${userPlayer1.score}</a>`);
+        $("#Score").find(".current-player-score").text(`${userPlayer.score} `);
+        $("#Score").find(".other-player-score").text(` ${userPlayer1.score}`);
+
+        //$("#Score").html(`<a class="nav-link">The score is ${userPlayer.score} : ${userPlayer1.score}</a>`);
         // Create player1 hand and deal cards.
         $.each(userPlayer["hand"], function(key, value) {
             createCard(0, value["suit"], value["valueN"], -600, 400);
             delayCard(value["suit"], value["valueN"], x, y);
 
             // If there's more cards, the next one should be shifted +90.
-            x +=90;
-            addCardClick(0, value["suit"], value["valueN"], -50, 230);
+            x += 90;
+
+            canPlay && addCardClick(0, value["suit"], value["valueN"], -50, 230);
         });
 
         // create prize cards
@@ -119,7 +126,9 @@ function bid(bidCard, suitName){
         data: JSON.stringify(bidCards),//JSON.stringify(bidCards),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function(data){processBid(data);},
+        success: function () {
+            location.reload();
+        }    ,
         failure: function(errMsg) {
             alert(errMsg);
         }
