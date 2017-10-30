@@ -38,7 +38,7 @@ userSchema.methods.getRanking = function (cb) {
         if (err) cb(err);
 
         user.pastGames.forEach(function (game) {
-            const player = _.find(game.players, ["userId", user.id]);
+            const player = _.find(game.players, { userId: user._id });
             player.win ? ratings.wins++ : ratings.losses++;
         });
 

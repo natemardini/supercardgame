@@ -144,7 +144,7 @@ gameSchema.methods.computeRound = function (user, input, cb) {
 
     if (winner) {
         game.endGame().then(() => {
-            return cb(null, game);
+            cb(null, game);
         });
     } else {
         game.save().then((game) => {
