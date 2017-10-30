@@ -26,7 +26,7 @@ module.exports = (passport) => {
         const user = new User({ handle, email, password });
 
         user.save().then(() => {
-            req.login(user, () => res.redirect("users/"));
+            req.login(user, () => res.redirect("users/lobby"));
         }).catch(err => res.status(500).json(err));
     });
 

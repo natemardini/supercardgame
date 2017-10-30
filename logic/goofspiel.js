@@ -10,8 +10,12 @@ function calculate(game, user, input) {
 
     const { bidCard, prizeCard } = input;
 
-    placeBid(user, game, bidCard);
-    checkBids(game, prizeCard);
+    const currentPlayer = _.find(game.players, { "userId": user._id });
+    let bid = _.find(currentPlayer.hand, { valueN: bidCard.value, suit: bidCard.suit });
+    let prize = _.find(game.deck.prize, { valueN: prizeCard.value, suit: prizeCard.suit });
+
+    placeBid(currentPlayer, game, bid);
+    checkBids(game, prize);
 
     let winner = null;
 
@@ -26,7 +30,6 @@ function calculate(game, user, input) {
 
 
 function checkBids(game, prize) {
-    prize = _.find(game.deck.prize, { valueN: prize.value, suit: prize.suit });
 
     const currentBids = game.players.reduce((a, p) => a += p.bid.length, 0);
 
@@ -75,31 +78,30 @@ function checkScores(game, final = false) {
 
 function cleanUp(game, prize) {
     game.players.forEach(p => {
-        p.bid.forEach(c => {
-            Deck.returnCard({
-                from: p.bid,
-                to: game.deck,
-                pile: "discards",
-                card: c
-            });
-        });
+        game.deck.discards.push(...p.bid);
+        p.bid = [];
     });
 
-    Deck.returnCard({
-        from: game.deck.prize,
-        to: game.deck,
-        pile: "discards",
-        card: prize
-    });
+    game.deck.discards.push(prize);
+    game.deck.prize.pop();
+    game.deck.discards.set("modified");
+    // game.deck.prize = game.deck.prize.filter(c => {
+    //     return !(c.suit === prize.suit && c.valueN === prize.valueN);
+    // });
+    //_.pull(game.deck.prize, prize);
+    //_.pull(prize, game.deck.prize);
+
 }
 
 function placeBid(user, game, bid) {
-    const currentPlayer = _.find(game.players, { "userId": user._id });
-    const bidCard = _.find(currentPlayer.hand, { valueN: bid.value, suit: bid.suit });
 
-    _.pull(currentPlayer.hand, bidCard);
-    currentPlayer.bid.push(bidCard);
-    currentPlayer.atRound = game.round + 1;
+    user.bid.push(bid);
+
+    user.hand = user.hand.filter(c => {
+        return c !== bid;
+    });
+
+    user.atRound = game.round + 1;
 }
 
 

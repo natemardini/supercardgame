@@ -6,10 +6,14 @@ const _ = require("lodash");
 
 // SCHEMAS
 const cardSchema = new Schema({
-    deck: String,
     value: String,
     valueN: Number,
     suit: String
+});
+
+const deckSchema = new Schema({
+    discards: [cardSchema],
+    prize: [cardSchema]
 });
 
 const playerSchema = new Schema({
@@ -31,7 +35,7 @@ const gameSchema = new Schema({
     round: Number,
     status: Number,
     players: [playerSchema],
-    deck: Schema.Types.Mixed,
+    deck: deckSchema,
     date: {
         type: Date,
         default: Date.now
@@ -143,8 +147,7 @@ gameSchema.methods.computeRound = function (user, input, cb) {
             return cb(null, game);
         });
     } else {
-        game.save((err, game) => {
-            if (err) throw err;
+        game.save().then((game) => {
             cb(null, game);
         });
     }

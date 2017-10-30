@@ -30,7 +30,7 @@ class Deck {
 
     static create(opts = {}) {
         const _deck = new Deck();
-        _deck._createDeckID();
+        //_deck._createDeckID();
 
         opts.suits = opts.suits || Deck.suits;
         opts.cardsPerSuit = Math.min((opts.cardsPerSuit || 13), 13);
@@ -87,8 +87,7 @@ class Deck {
         return {
             suit,
             value,
-            valueN: Deck.score(value),
-            deck: this.id
+            valueN: Deck.score(value)
         };
     }
 
