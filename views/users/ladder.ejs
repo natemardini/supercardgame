@@ -25,27 +25,19 @@
         <table id="active-game-list" class="table table-hover table-sm">
                 <thead>
                     <tr>
-                        <th scope="col">Game ID</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Opponent</th>
-                        <th scope="col">W/L</th>
+                        <th scope="col">Handle</th>
+                        <th scope="col">Ranking</th>
                     </tr>
                 </thead>
                 <tbody>
-                <% for(game of ranking) { %>
-                <tr>
-                        <td scope="col"><%= game.gameId %></td>
-                        <td scope="col">Goofspiel</td>
-                        <td scope="col"><%= game.opponent %></td>
-                        <% if (game.win) { %>
-                            <td scope="col">WIN</td>
-                        <% } else { %>
-                            <td scope="col">LOSE</td>
-                        <% } %>
-                </tr>
+                <% for(player of players) { %>
+                    <tr>
+                        <td scope="col"><%= player.handle %>Handle</td>
+                        <td scope="col"><%= player.ranking %></td>
+                    </tr>
                 <% } %>
                 </tbody>
-            </table>
+        </table>
         </div>
     </main>
 </body>

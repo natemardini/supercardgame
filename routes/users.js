@@ -65,6 +65,15 @@ module.exports = (passport) => {
     });
 
     /**
+    * GET /api/users/[id]
+    */
+    router.get("/history", passport.restricted, (req, res) => {
+        req.user.getHistory((err, ranking) => {
+            res.render("users/history", { ranking });
+        });
+    });
+
+    /**
      * GET /api/users/[id]
      */
     router.get("/:id", (req, res) => {

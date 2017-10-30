@@ -1,6 +1,7 @@
 "use strict";
 
 const router = require("express").Router();
+const User = require("./../models/users");
 
 module.exports = (passport) => {
     /**
@@ -12,6 +13,15 @@ module.exports = (passport) => {
         } else {
             res.redirect("/users/login");
         }
+    });
+
+    /**
+     * GET /html
+     */
+    router.get("/ladder", (req, res) => {
+        User.getLadder((err, players) => {
+            res.render("users/ladder", { players });
+        });
     });
 
     /**

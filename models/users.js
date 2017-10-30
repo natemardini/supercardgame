@@ -68,6 +68,23 @@ userSchema.methods.getHistory = function (cb) {
     });
 };
 
+userSchema.statics.getLadder = function (cb) {
+
+    this.find().then((users) => {
+        const players = [];
+
+        users.forEach(p => {
+            players.push({
+                handle: p.handle,
+                ranking: p.ranking
+            });
+        });
+
+        cb(null, players);
+    });
+
+};
+
 module.exports = mongoose.model("User", userSchema);
 
 
