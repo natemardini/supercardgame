@@ -46,6 +46,28 @@ userSchema.methods.getRanking = function (cb) {
     });
 };
 
+userSchema.methods.getHistory = function (cb) {
+    const ranking = [];
+
+    this.populate({ path: "pastGames", populate: "players.userId" }, (err, user) => {
+        if (err) cb(err);
+
+        user.pastGames.forEach(function (game) {
+            const player = _.find(game.players, ["userId._id", user._id]);
+
+            ranking.push({
+                gameId: game.id,
+                win: player.win,
+                opp: game.players.filter(e => {
+                    e.userId._id !== user._id;
+                })[0].handle
+            });
+        });
+
+        cb(null, ranking);
+    });
+};
+
 module.exports = mongoose.model("User", userSchema);
 
 

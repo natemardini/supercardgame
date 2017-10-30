@@ -169,11 +169,9 @@ gameSchema.methods.endGame = function () {
 
         game.status = 3;
 
-        return Promise.all([
-            game.players[0].userId.save(),
-            game.players[1].userId.save(),
-            game.save()
-        ]);
+        return this.rankPlayers().then(() => {
+            game.save();
+        });
     });
 };
 
@@ -220,7 +218,7 @@ gameSchema.methods.checkStartRequirements = function () {
     }
 };
 
-gameSchema.methods.rankPlayers = function (cb) {
+gameSchema.methods.rankPlayers = function () {
     const elo = new EloRank();
 
     this.populate("players.userId", (err) => {
@@ -235,11 +233,10 @@ gameSchema.methods.rankPlayers = function (cb) {
         winner.userId.ranking = elo.updateRating(expectedScoreW, 1, winner.userId.ranking);
         loser.userId.ranking = elo.updateRating(expectedScoreL, 0, loser.userId.ranking);
 
-        Promise.all([
+        return Promise.all([
             winner.userId.save(),
             loser.userId.save()
-        ]).then(cb)
-            .catch(e => console.log(e));
+        ]).catch(e => console.log(e));
     });
 };
 

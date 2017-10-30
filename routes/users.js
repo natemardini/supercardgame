@@ -42,9 +42,10 @@ module.exports = (passport) => {
     * PUT /api/users
     * Register a new user
     */
-    router.put("/login", passport.authenticate("local"), (req, res) => {
-        res.redirect("/users/lobby");
-    });
+    router.put("/login", passport.authenticate("local", {
+        successRedirect: "/users/lobby",
+        failureRedirect: "/users/login"
+    }));
 
     /**
     * DELETE /api/users/[id]
